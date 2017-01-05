@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Voronoi", "Voronoi\Voronoi.csproj", "{4545723C-3E6D-48E0-A35A-7D612E50D6B1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Runner", "Runner\Runner.csproj", "{10AE53B2-2D11-4895-8176-B68C4D0A26D8}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4545723C-3E6D-48E0-A35A-7D612E50D6B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4545723C-3E6D-48E0-A35A-7D612E50D6B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4545723C-3E6D-48E0-A35A-7D612E50D6B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4545723C-3E6D-48E0-A35A-7D612E50D6B1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{10AE53B2-2D11-4895-8176-B68C4D0A26D8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{10AE53B2-2D11-4895-8176-B68C4D0A26D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{10AE53B2-2D11-4895-8176-B68C4D0A26D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{10AE53B2-2D11-4895-8176-B68C4D0A26D8}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
