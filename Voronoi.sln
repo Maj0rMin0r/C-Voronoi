@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Runner", "Runner\Runner.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageComparer", "ImageComparer\ImageComparer.csproj", "{F40F22CE-6545-474B-A9DE-715B9F4525F2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageComparerTests", "ImageComparerTests\ImageComparerTests.csproj", "{8A1016BC-CB8B-451C-BABC-2C766F600E18}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{F40F22CE-6545-474B-A9DE-715B9F4525F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F40F22CE-6545-474B-A9DE-715B9F4525F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F40F22CE-6545-474B-A9DE-715B9F4525F2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8A1016BC-CB8B-451C-BABC-2C766F600E18}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8A1016BC-CB8B-451C-BABC-2C766F600E18}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8A1016BC-CB8B-451C-BABC-2C766F600E18}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8A1016BC-CB8B-451C-BABC-2C766F600E18}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Drawing;
 using ColorMine.ColorSpaces;
@@ -7,7 +6,7 @@ using ColorMine.ColorSpaces.Comparisons;
 
 namespace ImageComparer
 {
-    public class ImageComparison
+    public class ImageComparer
     {
         public double CompareImages(string voronoiPath, string originalImagePath)
         {
@@ -27,10 +26,10 @@ namespace ImageComparer
                 }
             }
             // TODO remove this foreach loop later. use it to look at the values we get back
-            foreach (var deltaE in deltaEList)
-            {
-                Console.WriteLine(deltaE);
-            }
+//            foreach (var deltaE in deltaEList)
+//            {
+//                Console.WriteLine(deltaE);
+//            }
             
             return deltaEList.Average();
         }
