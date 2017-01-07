@@ -146,7 +146,7 @@ namespace Voronoi
             fortune.GenerateVoronoi(xValues, yValues, count, 0, max, 0, max, minDist);
 
             //Visual output
-            var pixelWidth = 500;
+            var pixelWidth = 5000;
             var scale = pixelWidth/max;
             System.IO.StreamWriter writer = new System.IO.StreamWriter(@"D:\MyDocs\Documents\output.html");
             writer.WriteLine("<!DOCTYPE html>\n<html>\n<head>\n<title>\nTitle</title>\n</head>\n<body>\n<canvas id=\"myCanvas\" width=\"" + pixelWidth + "\" height=\"" + pixelWidth + "\" style=\"border:1px solid #d3d3d3;\">\nWords"
