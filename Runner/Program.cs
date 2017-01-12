@@ -4,9 +4,9 @@ using Voronoi;
 
 namespace Runner
 {
-	class Program
+    internal class Program
 	{
-		static void Main()
+	    private static void Main()
 		{
             Console.Out.WriteLine("Start");
 			Fortunes.Run();

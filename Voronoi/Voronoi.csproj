@@ -44,7 +44,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EdgeList.cs" />
+    <Compile Include="Edge.cs" />
     <Compile Include="Fortunes.cs" />
+    <Compile Include="GraphEdge.cs" />
+    <Compile Include="HalfEdge.cs" />
+    <Compile Include="Point2D.cs" />
+    <Compile Include="PriorityQueue.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
