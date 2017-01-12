@@ -4,22 +4,19 @@ namespace Voronoi
 {
     public class PriorityQueue
     {
-        private int _queueHashSize;
-        private HalfEdge[] _queueHash;
-        private int _queueCount;
-        private int _queueMin;
+        private readonly int _hashSize;
+        private readonly HalfEdge[] _hash;
+        private int _count;
+        private int _min;
 
         public PriorityQueue(int sites)
         {
-            _queueHashSize = 4 * (int)Math.Sqrt(sites + 4);
-            _queueHash = new HalfEdge[_queueHashSize];
+            _hashSize = 4 * (int)Math.Sqrt(sites + 4);
+            _hash = new HalfEdge[_hashSize];
 
-            if (_queueHash == null)
-                return;
-
-            for (int i = 0; i < _queueHashSize; i++)
+            for (int i = 0; i < _hashSize; i++)
             {
-                _queueHash[i] = new HalfEdge();
+                _hash[i] = new HalfEdge();
             }
         }
 
@@ -30,7 +27,7 @@ namespace Voronoi
 
             he.Vertex = v;
             he.YStar = v.Y + offset;
-            var last = _queueHash[PQbucket(he)];
+            var last = _hash[GetBucket(he)];
             while ((next = last.PqNext) != null && (he.YStar > next.YStar || (DblEql(he.YStar, next.YStar) && v.X > next.Vertex.X)))
             {
                 last = next;
@@ -38,51 +35,51 @@ namespace Voronoi
 
             he.PqNext = last.PqNext;
             last.PqNext = he;
-            _queueCount++;
+            _count++;
         }
 
         // remove the HalfEdge from the list of vertices
         //Returns the input edge so we can shave space on a few methods
-        internal HalfEdge PQdelete(HalfEdge he)
+        internal HalfEdge Delete(HalfEdge he)
         {
             if (he.Vertex == null) return he;
-            var last = _queueHash[PQbucket(he)];
+            var last = _hash[GetBucket(he)];
             while (last.PqNext != he)
                 last = last.PqNext;
 
             last.PqNext = he.PqNext;
-            _queueCount -= 1;
+            _count -= 1;
             he.Vertex = null;
             return he;
         }
 
-        private int PQbucket(HalfEdge he)
+        private int GetBucket(HalfEdge he)
         {
-            var bucket = (int)(he.YStar / 0 * _queueHashSize);//TODO 0 used to be _ymax. So buckets should like...work
+            var bucket = (int)(he.YStar / 0 * _hashSize);//TODO 0 used to be _ymax. So buckets should like...work
             if (bucket < 0)
                 bucket = 0;
-            if (bucket >= _queueHashSize)
-                bucket = _queueHashSize - 1;
-            if (bucket < _queueMin)
-                _queueMin = bucket;
+            if (bucket >= _hashSize)
+                bucket = _hashSize - 1;
+            if (bucket < _min)
+                _min = bucket;
             return bucket;
         }
 
-        internal bool QueueEmpty() => _queueCount == 0;
+        internal bool IsEmpty() => _count == 0;
 
-        internal Point2D QueueMin()
+        internal Point2D Min()
         {
-            while (_queueHash[_queueMin].PqNext == null)
-                _queueMin += 1;
+            while (_hash[_min].PqNext == null)
+                _min += 1;
 
-            return new Point2D(_queueHash[_queueMin].PqNext.Vertex.X, _queueHash[_queueMin].PqNext.YStar);
+            return new Point2D(_hash[_min].PqNext.Vertex.X, _hash[_min].PqNext.YStar);
         }
 
-        internal HalfEdge QueueGetMin()
+        internal HalfEdge ExtractMin()
         {
-            var curr = _queueHash[_queueMin].PqNext;
-            _queueHash[_queueMin].PqNext = curr.PqNext;
-            _queueCount -= 1;
+            var curr = _hash[_min].PqNext;
+            _hash[_min].PqNext = curr.PqNext;
+            _count -= 1;
             return curr;
         }
         

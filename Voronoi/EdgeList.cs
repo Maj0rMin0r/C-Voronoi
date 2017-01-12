@@ -150,5 +150,13 @@ namespace Voronoi
         }
 
         private static bool DblEql(double a, double b) => Math.Abs(a - b) < 0.00000000001;
+
+        internal static void ElInsert(HalfEdge lb, HalfEdge newHe)
+        {
+            newHe.ElLeft = lb;
+            newHe.ElRight = lb.ElRight;
+            lb.ElRight.ElLeft = newHe;
+            lb.ElRight = newHe;
+        }
     }
 }

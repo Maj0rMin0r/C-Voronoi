@@ -52,6 +52,7 @@
     <Compile Include="Point2D.cs" />
     <Compile Include="PriorityQueue.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="VoronoiOutput.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

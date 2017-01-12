@@ -23,133 +23,51 @@ namespace Voronoi
     {
         private int _siteidx;
         private Point2D[] _sites;
-        private int _nsites;
         private Point2D _bottomsite;
         private GraphEdge _allEdges;
-        private GraphEdge _iteratorEdges;
-        private double _minDistanceBetweenSites;
-        private const int ImageWidth = 1920;
-        private const int ImageHeight = 1920;
+        public int ImageWidth { get; private set; }
+        public int ImageHeight { get; private set; }
+        public int NumSites { get; private set; }
 
         public Fortunes()
         {
             _siteidx = 0;
             _allEdges = null;
-            _iteratorEdges = null;
-            _minDistanceBetweenSites = 0;
         }
 
-        public static void Run()
+        /**
+         * Creates object
+         * Runs
+         * Outputs
+         */
+        public static VoronoiOutput Run(int width, int height, int siteCount)
         {
-            var fortune = new Fortunes();
-            const int size = 100;
+            var fortune = new Fortunes
+                          {
+                              ImageWidth = width,
+                              ImageHeight = height
+                          };
 
-            var values = GetSet(size);
-
-            //Setup outputs
-            var graph = new Dictionary<Point2D, LinkedList<Point2D>>();
+            var values = GetSet(siteCount, width, height);
 
             //Run
             fortune.GenerateVoronoi(values);
 
-            //Visual output
-            var writer = new System.IO.StreamWriter(@"D:\MyDocs\Documents\output.html");
-            writer.WriteLine("<!DOCTYPE html>\n<html>\n<head>\n<title>\nTitle</title>\n</head>\n<body>\n<canvas id=\"myCanvas\" width=\"" + ImageWidth + "\" height=\"" + ImageHeight + "\" style=\"border:1px solid #d3d3d3;\">\nWords"
-                    + "</canvas>\n\n<script>\nvar c = document.getElementById(\"myCanvas\");\nvar ctx = c.getContext(\"2d\");\n\n<!--Points-->");
-
-            for (int q = 0; q < values.Length; q++)
-            {
-                writer.WriteLine("ctx.beginPath();\nctx.arc(" + values[q].X + "," + values[q].Y + ",1,0,2*Math.PI);\nctx.stroke();\n\n");
-            }
-
-            fortune.ResetIterator();
-            var line = fortune.GetNext();
-
-            while (line != null)
-            {
-                writer.WriteLine("ctx.moveTo(" + line[0] + "," + line[1] + ");\nctx.lineTo(" + line[2] + "," + line[3] + ");\nctx.stroke();");
-                line = fortune.GetNext();
-            }
-
-            writer.WriteLine("</script>\n</body>\n</html>");
-            writer.Close();
-
-            //Get cmd output
-            fortune.ResetIterator();
-            line = fortune.GetNext();
-
-            while (line != null)
-            {
-                LinkedList<Point2D> temp;
-
-                //	Write to a hash
-                //Make Point2D's
-                var key1 = new Point2D(line[0], line[1]); //Point 1
-                var key2 = new Point2D(line[2], line[3]); //Point 2
-
-                //Put relation
-                if (graph.ContainsKey(key1))
-                {
-                    //Get value, update, put back
-                    graph.TryGetValue(key1, out temp);
-
-                    if (temp == null)
-                        throw new ArgumentNullException(nameof(temp), "Key was missing for some reason");
-
-                    temp.AddLast(key2);
-                    graph.Remove(key1);
-                    graph.Add(key1, temp);
-                }
-                else
-                {
-                    //Create value, put
-                    temp = new LinkedList<Point2D>();
-                    temp.AddLast(key2);
-                    graph.Add(key1, temp);
-                }
-
-                line = fortune.GetNext();
-            }
-
-            Console.Out.WriteLine("Valid paths:");
-            foreach (var key in graph.Keys)
-            {
-                LinkedList<Point2D> valueList;
-                graph.TryGetValue(key, out valueList);
-
-                if (valueList == null)
-                    throw new ArgumentNullException(nameof(valueList), "Values not found");
-
-                foreach (var value in valueList)
-                {
-                    Console.Out.WriteLine("Got line [" + key.X + ", " + key.Y + "] -> [" + value.X + ", " + value.Y + "], ");
-                }
-            }
-        }
-
-        private static Point2D[] GetSet(int size)
-        {
-            var set = new Point2D[size];
-            var rand = new Random();
-
-            for (int i = 0; i < size; i++)
-            {
-                set[i] = new Point2D(rand.Next(0, ImageWidth), rand.Next(0, ImageHeight));
-            }
-            return set;
+            var output = new VoronoiOutput(fortune._allEdges, values);
+            return output;
         }
 
         public bool GenerateVoronoi(Point2D[] values)
         {
-            _nsites = values.Length;
-            _sites = new Point2D[_nsites];
+            NumSites = values.Length;
+            _sites = new Point2D[NumSites];
 
             double xmin = values[0].X;
             double ymin = values[0].Y;
             double xmax = values[0].X;
             double ymax = values[0].Y;
 
-            for (int i = 0; i < _nsites; i++)
+            for (int i = 0; i < NumSites; i++)
             {
                 _sites[i] = values[i];
 
@@ -163,7 +81,6 @@ namespace Voronoi
                 else if (values[i].Y > ymax)
                     ymax = values[i].Y;
             }
-            //TODO Set max's using image x and y
 
             // This is where C++ does qsort and some magic stuff to sort these. We
             // do it the hard way. This sort is best-case n and stable, and moreso takes barely any lines
@@ -200,33 +117,6 @@ namespace Voronoi
             Voronoi();
 
             return true;
-        }
-
-        public void ResetIterator() => _iteratorEdges = _allEdges;
-
-        public double[] GetNext()
-        {
-            var returned = new double[4];
-
-            if (_iteratorEdges == null)
-                return null;
-
-            returned[0] = _iteratorEdges.P1.X;
-            returned[1] = _iteratorEdges.P1.Y;
-            returned[2] = _iteratorEdges.P2.X;
-            returned[3] = _iteratorEdges.P2.Y;
-
-            _iteratorEdges = _iteratorEdges.Next;
-
-            return returned;
-        }
-
-        private static void ElInsert(HalfEdge lb, HalfEdge newHe)
-        {
-            newHe.ElLeft = lb;
-            newHe.ElRight = lb.ElRight;
-            lb.ElRight.ElLeft = newHe;
-            lb.ElRight = newHe;
         }
         
         private Point2D Leftreg(HalfEdge he)
@@ -460,9 +350,9 @@ namespace Voronoi
             Point2D newintstar = null;
             HalfEdge lbnd;
 
-            var queue = new PriorityQueue(_nsites);
+            var queue = new PriorityQueue(NumSites);
             _bottomsite = NextSite();
-            var list = new EdgeList(_nsites);
+            var list = new EdgeList(NumSites);
 
             var newsite = NextSite();
 
@@ -474,36 +364,36 @@ namespace Voronoi
                 HalfEdge bisector;
                 Edge e;
 
-                if (!queue.QueueEmpty())
-                    newintstar = queue.QueueMin();
+                if (!queue.IsEmpty())
+                    newintstar = queue.Min();
 
                 //if the lowest site has a smaller y value than the lowest vector intersection, process the site
                 //otherwise process the vector intersection		
 
-                if (newsite != null && (queue.QueueEmpty() || newsite.Y < newintstar.Y || (DblEql(newsite.Y, newintstar.Y) && newsite.X < newintstar.X)))
+                if (newsite != null && (queue.IsEmpty() || newsite.Y < newintstar.Y || (DblEql(newsite.Y, newintstar.Y) && newsite.X < newintstar.X)))
                 { /* new site is smallest - this is a site event*/
                     lbnd = list.LeftBound(newsite); //get the first HalfEdge to the LEFT of the new site
                     rbnd = lbnd.ElRight; //get the first HalfEdge to the RIGHT of the new site
                     bot = Rightreg(lbnd); //if this HalfEdge has no edge, , bot = bottom site (whatever that is)
                     e = Bisect(bot, newsite); //create a new edge that bisects 
                     bisector = new HalfEdge(e, 0); //create a new HalfEdge, setting its elPm field to 0			
-                    ElInsert(lbnd, bisector); //insert this new bisector edge between the left and right vectors in a linked list	
+                    EdgeList.ElInsert(lbnd, bisector); //insert this new bisector edge between the left and right vectors in a linked list	
 
                     if ((p = Intersect(lbnd, bisector)) != null)//if the new bisector intersects with the left edge, remove the left edge's vertex, and put in the new one
-                        queue.PQinsert(queue.PQdelete(lbnd), p, p.Distance(newsite));
+                        queue.PQinsert(queue.Delete(lbnd), p, p.Distance(newsite));
 
                     lbnd = bisector;
                     bisector = new HalfEdge(e, 1); //create a new HalfEdge, setting its elPm field to 1
-                    ElInsert(lbnd, bisector); //insert the new HE to the right of the original bisector earlier in the IF stmt
+                    EdgeList.ElInsert(lbnd, bisector); //insert the new HE to the right of the original bisector earlier in the IF stmt
 
                     if ((p = Intersect(bisector, rbnd)) != null)//if this new bisector intersects with the
                         queue.PQinsert(bisector, p, p.Distance(newsite)); //push the HE into the ordered linked list of vertices
 
                     newsite = NextSite();
                 }
-                else if (!queue.QueueEmpty())
+                else if (!queue.IsEmpty())
                 { /* intersection is smallest - this is a vector event */
-                    lbnd = queue.QueueGetMin(); //pop the HalfEdge with the lowest vector off the ordered list of vectors				
+                    lbnd = queue.ExtractMin(); //pop the HalfEdge with the lowest vector off the ordered list of vectors				
                     var llbnd = lbnd.ElLeft;
                     rbnd = lbnd.ElRight; //get the HalfEdge to the right of the above HE
                     var rrbnd = rbnd.ElRight;
@@ -514,7 +404,7 @@ namespace Voronoi
                     Endpoint(lbnd.ElEdge, lbnd.ElPm, v); //set the endpoint of the left HalfEdge to be this vector
                     Endpoint(rbnd.ElEdge, rbnd.ElPm, v); //set the endpoint of the right HalfEdge to be this vector
                     list.Delete(lbnd); //mark the lowest HE for deletion - can't delete yet because there might be pointers to it in Hash Map	
-                    queue.PQdelete(rbnd); //remove all vertex events to do with the  right HE
+                    queue.Delete(rbnd); //remove all vertex events to do with the  right HE
                     list.Delete(rbnd); //mark the right HE for deletion - can't delete yet because there might be pointers to it in Hash Map	
                     var pm = 0;
 
@@ -529,14 +419,14 @@ namespace Voronoi
                     e = Bisect(bot, top); //create an Edge (or line) that is between the two Sites. This creates
                     //the formula of the line, and assigns a line number to it
                     bisector = new HalfEdge(e, pm); //create a HE from the Edge 'e', and make it point to that edge with its elEdge field
-                    ElInsert(llbnd, bisector); //insert the new bisector to the right of the left HE
+                    EdgeList.ElInsert(llbnd, bisector); //insert the new bisector to the right of the left HE
                     Endpoint(e, 1 - pm, v); //set one endpoint to the new edge to be the vector point 'v'.
                     //If the site to the left of this bisector is higher than the right
                     //Site, then this endpoint is put in position 0; otherwise in pos 1
 
                     //if left HE and the new bisector don't intersect, then delete the left HE, and reinsert it 
                     if ((p = Intersect(llbnd, bisector)) != null)
-                        queue.PQinsert(queue.PQdelete(llbnd), p, p.Distance(bot));
+                        queue.PQinsert(queue.Delete(llbnd), p, p.Distance(bot));
 
                     //if right HE and the new bisector don't intersect, then reinsert it 
                     if ((p = Intersect(bisector, rrbnd)) != null)
@@ -552,6 +442,18 @@ namespace Voronoi
         private static bool DblEql(double a, double b) => Math.Abs(a - b) < 0.00000000001;
 
         /* Return a single in-storage site */
-        private Point2D NextSite() => _siteidx >= _nsites ? null : _sites[_siteidx++];
+        private Point2D NextSite() => _siteidx >= NumSites ? null : _sites[_siteidx++];
+
+        private static Point2D[] GetSet(int size, int x, int y)
+        {
+            var set = new Point2D[size];
+            var rand = new Random();
+
+            for (int i = 0; i < size; i++)
+            {
+                set[i] = new Point2D(rand.Next(0, x), rand.Next(0, y));
+            }
+            return set;
+        }
     }
 }
