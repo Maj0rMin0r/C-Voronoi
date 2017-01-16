@@ -53,6 +53,12 @@
     <Compile Include="VoronoiWriterTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\VoronoiWriter\VoronoiWriter.csproj">
+      <Project>{5d1a59a8-a64d-4ff3-ade5-fb49ea6a23e4}</Project>
+      <Name>VoronoiWriter</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>
