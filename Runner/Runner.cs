@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Threading.Tasks;
 using Voronoi;
-
+using VoronoiDrawer;
 
 namespace Runner
 {
@@ -54,21 +55,27 @@ namespace Runner
             Console.Out.WriteLine("Finished");
         }
 
-	    private static void Run(Bitmap originalImage, Bitmap newImage, int numberOfPointsToPlot)
+	    private static void Run(Image originalImage, Bitmap newImage, int numberOfPointsToPlot)
 	    {
-            //
+	        var output = Fortunes.Run(originalImage.Width, originalImage.Height, numberOfPointsToPlot);
 	        while (true)
 	        {
-                //diagrams
+                //calculate diagrams
 	            while (true)
 	            {
-                    //regions
-	                break;
+                    //calculate regions
+                    Parallel.Invoke(() =>
+                                    {
+                                       //do threaded work here
+                                    });
+                    break;
 	            }
                 //average De
 	            break;
 	        }
             //call printer
+	        var writer = new Drawer(newImage);
+            
 	    }
 	}
 }

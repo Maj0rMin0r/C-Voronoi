@@ -12,9 +12,9 @@ using Color = System.Drawing.Color;
 using Pen = System.Drawing.Pen;
 using PixelFormat = System.Drawing.Imaging.PixelFormat;
 
-namespace VoronoiWriter
+namespace VoronoiDrawer
 {
-    public class VoronoiWriter : IDisposable
+    public class Drawer : IDisposable
     {
         private  Bitmap _bitmap;
         private Graphics _canvas;
@@ -26,7 +26,7 @@ namespace VoronoiWriter
         //@url -> http://stackoverflow.com/questions/17736160/good-way-to-check-if-file-extension-is-of-an-image-or-not
         private static readonly string[] ValidFileExtensions = { ".jpg", ".bmp", ".gif", ".png" };
 
-        public VoronoiWriter(int width, int height, string fileName, string fileDirectory)
+        public Drawer(int width, int height, string fileName, string fileDirectory)
         {
             _bitmap = new Bitmap(width, height);
             _canvas = Graphics.FromImage(_bitmap);
@@ -36,7 +36,7 @@ namespace VoronoiWriter
             //_writeableBitmap = new WriteableBitmap(width, height, 96, 96, PixelFormats.Bgr32, null);
         }
 
-        public VoronoiWriter(Bitmap bitmap)
+        public Drawer(Bitmap bitmap)
         {
             _bitmap = bitmap;
             _canvas = Graphics.FromImage(_bitmap);
