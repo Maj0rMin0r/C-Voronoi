@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using VoronoiDrawer;
 
 namespace VoronoiTests
 {
@@ -13,9 +14,9 @@ namespace VoronoiTests
         [TestMethod]
         public void TestMethod1()
         {
-            var writer = new VoronoiWriter.VoronoiWriter(420, 420);
+            var writer = new Drawer(420, 420, FileName, FileDirectory);
             writer.DrawLine(new double[] { 0, 210, 420, 210 });
-            writer.SaveToNewImageFile(FileName, FileDirectory);
+            //writer.SaveToNewImageFile(FileName, FileDirectory);
         }
     }
 }
