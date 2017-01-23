@@ -451,8 +451,9 @@ namespace Voronoi
 
             for (int i = 0; i < size; i++)
             {
-                set[i] = new Point2D(rand.Next(0, x), rand.Next(0, y));
+                set[i] = new Point2D(rand.Next(0, x - 1), rand.Next(0, y - 1));
             }
+
             return set;
         }
     }

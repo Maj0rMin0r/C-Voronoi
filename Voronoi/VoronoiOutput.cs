@@ -7,7 +7,7 @@ namespace Voronoi
     {
         private GraphEdge IteratorEdges { get; set; }
         private GraphEdge AllEdges { get; }
-        private Point2D[] Sites { get; }
+        public Point2D[] Sites { get; }
 
         internal VoronoiOutput(GraphEdge results, Point2D[] sites)
         {
@@ -19,44 +19,7 @@ namespace Voronoi
         public void OutputConsole()
         {
             //Setup outputs
-            var graph = new Dictionary<Point2D, LinkedList<Point2D>>();
-            
-            //Get cmd output
-            ResetIterator();
-            var line = GetNext();
-
-            while (line != null)
-            {
-                LinkedList<Point2D> temp;
-
-                //	Write to a hash
-                //Make Point2D's
-                var key1 = new Point2D(line[0], line[1]); //Point 1
-                var key2 = new Point2D(line[2], line[3]); //Point 2
-
-                //Put relation
-                if (graph.ContainsKey(key1))
-                {
-                    //Get value, update, put back
-                    graph.TryGetValue(key1, out temp);
-
-                    if (temp == null)
-                        throw new ArgumentNullException(nameof(temp), "Key was missing for some reason");
-
-                    temp.AddLast(key2);
-                    graph.Remove(key1);
-                    graph.Add(key1, temp);
-                }
-                else
-                {
-                    //Create value, put
-                    temp = new LinkedList<Point2D>();
-                    temp.AddLast(key2);
-                    graph.Add(key1, temp);
-                }
-
-                line = GetNext();
-            }
+            var graph = GenerateGraph();
 
             Console.Out.WriteLine("Valid paths:");
             foreach (var key in graph.Keys)
@@ -99,7 +62,243 @@ namespace Voronoi
             writer.Close();
         }
 
+        /**
+         * This method seeks to return a collection of every point within a region, given the lines (from OutputLines) and one point (the origin)
+         * Using psuedocode pulled from https://en.wikipedia.org/wiki/Flood_fill#Alternative_implementations
+         */
+        public List<IntPoint2D> OutputRegion(Point2D origin, bool[,] array)
+        {
+            var points = new List<IntPoint2D>();
+            var pq = new Queue<IntPoint2D>();
+            var point = new IntPoint2D(origin);
+            pq.Enqueue(point);
+
+            while (pq.Count > 0)
+            {
+                var p = pq.Dequeue();
+
+                //To deal with odd shapes, we might add something to the queue then process the row already
+                //If we do this row, we already have the row above/below in the queue. So we can skip this whole thing
+                if (array[p.X,p.Y]) continue;
+
+                // Set w and e equal to p
+                //East and west should represent bounds of valid, inclusive
+                var e = new IntPoint2D(p);
+                var w = new IntPoint2D(p);
+                
+                // Move w to the west until the color of the node to the west of w no longer matches (or OOB)
+                while (!(w.X <= 0 || array[w.X-1, w.Y]))
+                    w.X = w.X - 1;
+
+                // Move e to the east until the color of the node to the east of e no longer matches (or OOB)
+                while (!(e.X >= array.GetUpperBound(0)-1 || array[e.X+1, e.Y]))
+                    e.X = e.X + 1;
+
+                // For each node n between w and e:
+                for (int x = w.X; x <= e.X; x++)
+                {
+                    array[x, p.Y] = true;//Set node
+                    points.Add(new IntPoint2D(x,p.Y));
+
+                    // If the node above/below is empty, add that node to pq
+                    if (!(p.Y == array.GetUpperBound(1)-1 || array[x, p.Y + 1]))
+                        pq.Enqueue(new IntPoint2D(x, p.Y + 1));
+
+                    if (!( p.Y == 0 || array[x, p.Y - 1]))
+                        pq.Enqueue(new IntPoint2D(x, p.Y - 1));
+                }
+            }
+            return points;
+        }
+
+        /**
+         * Generates a graphical interpretation of all pixels for the lines of the diagram
+         */
+        public bool[,] OutputLines(int width, int height)
+        {
+            var array = BuildArray(width, height);
+            var graph = GenerateGraph();
+
+            foreach (var key in graph.Keys)
+            {
+                LinkedList<Point2D> valueList;
+                graph.TryGetValue(key, out valueList);
+
+                if (valueList == null)
+                    throw new ArgumentNullException(nameof(valueList), "Values not found");
+
+                foreach (var value in valueList)
+                {
+                    DrawLine(R(key.X), R(key.Y), R(value.X), R(value.Y), ref array);
+                }
+            }
+
+            return array;
+        }
+
+        /**
+         * For sanity-checking region output. And it looks kinda neat
+         */
+        public void PrintRegions(int w, int h)
+        {
+            var origins = Sites;
+            var booArray = OutputLines(w, h);
+            var array = new string[w,h];
+
+            //Carry over lines
+            for (int i = 0; i<w; i++)
+            {
+                for (int j = 0; j<h; j++)
+                {
+                    if (booArray[i, j])
+                        array[i, j] = "X";
+                }
+            }
+
+            //Add regions
+            foreach (var site in origins)
+            {
+                var region = OutputRegion(site, booArray);
+
+                foreach (var point in region)
+                    array[point.X, point.Y] = "/";
+                array[(int)site.X, (int)site.Y] = "O";
+            }
+            
+
+            //Print block
+            Console.Out.WriteLine("Regions:");
+            for (int y = h-1; y >= 0; y--)
+            {
+                for (int x = 0; x < w; x++)
+                {
+                    Console.Out.Write(array[x,y]);
+                }
+                Console.Out.WriteLine();
+            }
+
+
+        }
+        
+        /**
+         * To sanity-check the line-drawing code
+         */
+        public static void PrintArray(bool[,] array, int width, int height)
+        {
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    Console.Out.Write(array[x, y] ? "X" : " ");
+                }
+                Console.Out.WriteLine();
+            }
+        }
+
+        /**
+         * Bresenhams line theorem tells us all the points along a line. Neat!
+         * Slightly modifed from the below source
+         * http://www.roguebasin.com/index.php?title=Bresenham%27s_Line_Algorithm
+         * @author Jason Morley (Source: http://www.morleydev.co.uk/blog/2010/11/18/generic-bresenhams-line-algorithm-in-visual-basic-net/)
+         */
+        private static void DrawLine(int x0, int y0, int x1, int y1, ref bool[,] array)
+        {
+            bool steep = Math.Abs(y1 - y0) > Math.Abs(x1 - x0);
+            if (steep) { Swap(ref x0, ref y0); Swap(ref x1, ref y1); }
+            if (x0 > x1) { Swap(ref x0, ref x1); Swap(ref y0, ref y1); }
+            int dX = x1 - x0, dY = Math.Abs(y1 - y0), err = dX / 2, ystep = y0 < y1 ? 1 : -1, y = y0;
+
+            for (int x = x0; x <= x1; ++x)
+            {
+                if (steep)
+                {
+                    Draw(y, x, ref array);
+                }
+                else
+                {
+                    Draw(x, y, ref array);
+                }
+
+                err = err - dY;
+                if (err >= 0) continue;
+                y += ystep; err += dX;
+            }
+        }
+
+        /**
+         * Swapper helper for the line algorithm
+         * @author Jason Morley (Source: http://www.morleydev.co.uk/blog/2010/11/18/generic-bresenhams-line-algorithm-in-visual-basic-net/)
+         */
+        private static void Swap<T>(ref T lhs, ref T rhs)
+        {
+            var temp = lhs;
+            lhs = rhs;
+            rhs = temp;
+        }
+
+        private static void Draw(int x, int y, ref bool[,] array) => array[x, y] = true;
+
+        private static int R(double input) => (int)Math.Round(input);
+
         private void ResetIterator() => IteratorEdges = AllEdges;
+
+        private Dictionary<Point2D, LinkedList<Point2D>> GenerateGraph()
+        {
+            //Setup outputs
+            var graph = new Dictionary<Point2D, LinkedList<Point2D>>();
+
+            //Get cmd output
+            ResetIterator();
+            var line = GetNext();
+
+            while (line != null)
+            {
+                LinkedList<Point2D> temp;
+
+                //	Write to a hash
+                //Make Point2D's
+                var key1 = new Point2D(line[0], line[1]); //Point 1
+                var key2 = new Point2D(line[2], line[3]); //Point 2
+
+                //Put relation
+                if (graph.ContainsKey(key1))
+                {
+                    //Get value, update, put back
+                    graph.TryGetValue(key1, out temp);
+
+                    if (temp == null)
+                        throw new ArgumentNullException(nameof(temp), "Key was missing for some reason");
+
+                    temp.AddLast(key2);
+                    graph.Remove(key1);
+                    graph.Add(key1, temp);
+                }
+                else
+                {
+                    //Create value, put
+                    temp = new LinkedList<Point2D>();
+                    temp.AddLast(key2);
+                    graph.Add(key1, temp);
+                }
+
+                line = GetNext();
+            }
+
+            return graph;
+        }
+
+        private static bool[,] BuildArray(int width, int height)
+        {
+            var array = new bool[width + 1, height + 1];
+            for (int i = 0; i <= width; i++)
+            {
+                for (int j = 0; j <= height; j++)
+                {
+                    array[i, j] = false;
+                }
+            }
+            return array;
+        }
 
         private double[] GetNext()
         {

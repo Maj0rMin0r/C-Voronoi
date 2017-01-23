@@ -8,8 +8,8 @@ namespace Voronoi
     */
     public class Point2D
     {
-        internal double X { get; }
-        internal double Y { get; }
+        internal double X { get; set; }
+        internal double Y { get; set; }
 
         public Point2D(double x, double y)
         {
@@ -23,5 +23,34 @@ namespace Voronoi
             var b = Math.Pow(botCoord.Y - Y, 2);
             return Math.Sqrt(a + b);
         }
+        public override string ToString() => "[" + X + "," + Y + "]";
+    }
+
+    /**
+     * An integer implementation
+     */
+    public class IntPoint2D
+    {
+        internal int X { get; set; }
+        internal int Y { get; set; }
+
+        public IntPoint2D(int x, int y)
+        {
+            X = x;
+            Y = y;
+        }
+
+        public IntPoint2D(Point2D p)
+        {
+            X = (int) p.X;
+            Y = (int) p.Y;
+        }
+
+        public IntPoint2D(IntPoint2D p)
+        {
+            X = p.X;
+            Y = p.Y;
+        }
+        public override string ToString() => "[" + X + "," + Y + "]";
     }
 }
