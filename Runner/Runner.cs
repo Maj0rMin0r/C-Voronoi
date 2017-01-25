@@ -66,7 +66,9 @@ namespace Runner
                     //calculate regions
                     Parallel.Invoke(() =>
                                     {
-                                       //do threaded work here
+                                        //do threaded work here
+                                        //@url -> https://msdn.microsoft.com/en-us/library/dd537609(v=vs.110).aspx
+                                        //returns Collection of De
                                     });
                     break;
 	            }

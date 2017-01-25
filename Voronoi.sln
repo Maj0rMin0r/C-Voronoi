@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Voronoi", "Voronoi\Voronoi.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Runner", "Runner\Runner.csproj", "{10AE53B2-2D11-4895-8176-B68C4D0A26D8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VoronoiWriter", "VoronoiWriter\VoronoiWriter.csproj", "{5D1A59A8-A64D-4FF3-ADE5-FB49EA6A23E4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VoronoiDrawer", "VoronoiWriter\VoronoiDrawer.csproj", "{5D1A59A8-A64D-4FF3-ADE5-FB49EA6A23E4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageComparer", "ImageComparer\ImageComparer.csproj", "{F40F22CE-6545-474B-A9DE-715B9F4525F2}"
 EndProject
