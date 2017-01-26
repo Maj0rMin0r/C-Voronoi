@@ -91,7 +91,7 @@ namespace Voronoi
                     w.X = w.X - 1;
 
                 // Move e to the east until the color of the node to the east of e no longer matches (or OOB)
-                while (!(e.X >= array.GetUpperBound(0)-1 || array[e.X+1, e.Y]))
+                while (!(e.X >= array.GetUpperBound(0) || array[e.X+1, e.Y]))
                     e.X = e.X + 1;
 
                 // For each node n between w and e:
@@ -101,7 +101,7 @@ namespace Voronoi
                     points.Add(new IntPoint2D(x,p.Y));
 
                     // If the node above/below is empty, add that node to pq
-                    if (!(p.Y == array.GetUpperBound(1)-1 || array[x, p.Y + 1]))
+                    if (!(p.Y == array.GetUpperBound(1) || array[x, p.Y + 1]))
                         pq.Enqueue(new IntPoint2D(x, p.Y + 1));
 
                     if (!( p.Y == 0 || array[x, p.Y - 1]))
@@ -238,7 +238,12 @@ namespace Voronoi
 
         private static void Draw(int x, int y, ref bool[,] array) => array[x, y] = true;
 
-        private static int R(double input) => (int)Math.Round(input);
+        /**
+         * Quick helper to round double to int
+         * Converts from 1,1 index to 0,0.
+         * Makes sure we don't round too low
+         */
+        private static int R(double input) => input >= 1 ? (int)Math.Round(input - 1) : 0;
 
         private void ResetIterator() => IteratorEdges = AllEdges;
 
@@ -289,10 +294,10 @@ namespace Voronoi
 
         private static bool[,] BuildArray(int width, int height)
         {
-            var array = new bool[width + 1, height + 1];
-            for (int i = 0; i <= width; i++)
+            var array = new bool[width, height];
+            for (int i = 0; i < width; i++)
             {
-                for (int j = 0; j <= height; j++)
+                for (int j = 0; j < height; j++)
                 {
                     array[i, j] = false;
                 }

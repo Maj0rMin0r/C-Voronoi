@@ -57,6 +57,27 @@ namespace Voronoi
             return output;
         }
 
+        /**
+         * Creates object
+         * Runs
+         * Outputs
+         * Uses manual set (for testing, mainly
+         */
+        public static VoronoiOutput Run(int width, int height, Point2D[] values)
+        {
+            var fortune = new Fortunes
+            {
+                ImageWidth = width,
+                ImageHeight = height
+            };
+            
+            //Run
+            fortune.GenerateVoronoi(values);
+
+            var output = new VoronoiOutput(fortune._allEdges, values);
+            return output;
+        }
+
         public bool GenerateVoronoi(Point2D[] values)
         {
             NumSites = values.Length;
@@ -247,8 +268,8 @@ namespace Voronoi
 
             if (DblEql(e.A, 1.0))
             {
-                y1 = 0;
-                if (s1 != null && s1.Y > 0)
+                y1 = 1;
+                if (s1 != null && s1.Y > 1)
                     y1 = s1.Y;
 
                 if (y1 > ImageHeight)
@@ -259,11 +280,11 @@ namespace Voronoi
                 if (s2 != null && s2.Y < ImageHeight)
                     y2 = s2.Y;
 
-                if (y2 < 0)
-                    y2 = 0;
+                if (y2 < 1)
+                    y2 = 1;
 
                 x2 = e.C - e.B * y2;
-                if (((x1 > ImageWidth) && (x2 > ImageWidth)) || ((x1 < 0) && (x2 < 0)))
+                if (((x1 > ImageWidth) && (x2 > ImageWidth)) || ((x1 < 1) && (x2 < 1)))
                     return;
 
                 if (x1 > ImageWidth)
@@ -272,9 +293,9 @@ namespace Voronoi
                     y1 = (e.C - x1) / e.B;
                 }
 
-                if (x1 < 0)
+                if (x1 < 1)
                 {
-                    x1 = 0;
+                    x1 = 1;
                     y1 = (e.C - x1) / e.B;
                 }
 
@@ -284,16 +305,16 @@ namespace Voronoi
                     y2 = (e.C - x2) / e.B;
                 }
 
-                if (x2 < 0)
+                if (x2 < 1)
                 {
-                    x2 = 0;
+                    x2 = 1;
                     y2 = (e.C - x2) / e.B;
                 }
             }
             else
             {
-                x1 = 0;
-                if (s1 != null && s1.X > 0)
+                x1 = 1;
+                if (s1 != null && s1.X > 1)
                     x1 = s1.X;
 
                 if (x1 > ImageWidth)
@@ -304,12 +325,12 @@ namespace Voronoi
                 if (s2 != null && s2.X < ImageWidth)
                     x2 = s2.X;
 
-                if (x2 < 0)
-                    x2 = 0;
+                if (x2 < 1)
+                    x2 = 1;
 
                 y2 = e.C - e.A * x2;
 
-                if (((y1 > ImageHeight) & (y2 > ImageHeight)) | ((y1 < 0) & (y2 < 0)))
+                if (((y1 > ImageHeight) & (y2 > ImageHeight)) | ((y1 < 1) & (y2 < 1)))
                     return;
 
                 if (y1 > ImageHeight)
@@ -318,9 +339,9 @@ namespace Voronoi
                     x1 = (e.C - y1) / e.A;
                 }
 
-                if (y1 < 0)
+                if (y1 < 1)
                 {
-                    y1 = 0;
+                    y1 = 1;
                     x1 = (e.C - y1) / e.A;
                 }
 
@@ -330,9 +351,9 @@ namespace Voronoi
                     x2 = (e.C - y2) / e.A;
                 }
 
-                if (y2 < 0)
+                if (y2 < 1)
                 {
-                    y2 = 0;
+                    y2 = 1;
                     x2 = (e.C - y2) / e.A;
                 }
             }
@@ -451,7 +472,7 @@ namespace Voronoi
 
             for (int i = 0; i < size; i++)
             {
-                set[i] = new Point2D(rand.Next(0, x - 1), rand.Next(0, y - 1));
+                set[i] = new Point2D(rand.Next(1, x), rand.Next(1, y));
             }
 
             return set;

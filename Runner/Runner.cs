@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -12,12 +11,36 @@ namespace Runner
     internal class Runner
     {
         private const string MissingArgs = "Error: missing file location or number of plot points";
+        private const int Width = 10;
+	    private const int Height = 10;
+        private const int NumSites = 2;
+        
+        private static void Main()
+        {
+            Console.Out.WriteLine("Started");
+            var output = Fortunes.Run(Width, Height, NumSites);
+            var lines = output.OutputLines(Width, Height);
+            var origins = output.Sites;
 
-        private const int Width = 1920;
-	    private const int Height = 1080;
+            output.OutputConsole();
 
-	    private static int Main2(string[] args)
-		{
+            output.OutputFile(Width, Height);
+            Console.Out.WriteLine("File Created");
+
+
+            foreach (var site in origins)
+            {
+                var region = output.OutputRegion(site, lines);
+                //TODO Process regions
+            }
+
+            output.PrintRegions(Width, Height);
+
+            Console.Out.WriteLine("Finished");
+        }
+
+        private static int Main2(string[] args)
+        {
             if (args.Length < 2)
             {
                 Console.WriteLine(MissingArgs);
@@ -44,18 +67,9 @@ namespace Runner
             }
 
             return 0;
-		}
-
-        private static void Main()
-        {
-            Console.Out.WriteLine("Started");
-            var output = Fortunes.Run(Width, Height, 500);
-            output.OutputConsole();
-            output.OutputFile(Width, Height);
-            Console.Out.WriteLine("Finished");
         }
 
-	    private static void Run(Image originalImage, Bitmap newImage, int numberOfPointsToPlot)
+        private static void Run(Image originalImage, Bitmap newImage, int numberOfPointsToPlot)
 	    {
 	        var output = Fortunes.Run(originalImage.Width, originalImage.Height, numberOfPointsToPlot);
 	        while (true)
