@@ -102,6 +102,25 @@ namespace Voronoi
                 else if (values[i].Y > ymax)
                     ymax = values[i].Y;
             }
+            var i = 0;
+            foreach (var value in values)
+            {
+
+                _sites[i] = value;
+
+                if (value.X < xmin)
+                    xmin = value.X;
+                else if (value.X > xmax)
+                    xmax = value.X;
+
+                if (value.Y < ymin)
+                    ymin = value.Y;
+                else if (value.Y > ymax)
+                    ymax = value.Y;
+            }
+
+
+//            values.
 
             // This is where C++ does qsort and some magic stuff to sort these. We
             // do it the hard way. This sort is best-case n and stable, and moreso takes barely any lines
