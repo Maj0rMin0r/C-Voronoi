@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Voronoi
 {
@@ -102,25 +103,6 @@ namespace Voronoi
                 else if (values[i].Y > ymax)
                     ymax = values[i].Y;
             }
-            var i = 0;
-            foreach (var value in values)
-            {
-
-                _sites[i] = value;
-
-                if (value.X < xmin)
-                    xmin = value.X;
-                else if (value.X > xmax)
-                    xmax = value.X;
-
-                if (value.Y < ymin)
-                    ymin = value.Y;
-                else if (value.Y > ymax)
-                    ymax = value.Y;
-            }
-
-
-//            values.
 
             // This is where C++ does qsort and some magic stuff to sort these. We
             // do it the hard way. This sort is best-case n and stable, and moreso takes barely any lines
@@ -388,7 +370,7 @@ namespace Voronoi
         private void Voronoi()
         {
             Point2D newintstar = null;
-            HalfEdge lbnd;
+            HalfEdge leftBound;
 
             var queue = new PriorityQueue(NumSites);
             _bottomsite = NextSite();
@@ -412,19 +394,19 @@ namespace Voronoi
 
                 if (newsite != null && (queue.IsEmpty() || newsite.Y < newintstar.Y || (DblEql(newsite.Y, newintstar.Y) && newsite.X < newintstar.X)))
                 { /* new site is smallest - this is a site event*/
-                    lbnd = list.LeftBound(newsite); //get the first HalfEdge to the LEFT of the new site
-                    rbnd = lbnd.ElRight; //get the first HalfEdge to the RIGHT of the new site
-                    bot = Rightreg(lbnd); //if this HalfEdge has no edge, , bot = bottom site (whatever that is)
+                    leftBound = list.LeftBound(newsite); //get the first HalfEdge to the LEFT of the new site
+                    rbnd = leftBound.ElRight; //get the first HalfEdge to the RIGHT of the new site
+                    bot = Rightreg(leftBound); //if this HalfEdge has no edge, , bot = bottom site (whatever that is)
                     e = Bisect(bot, newsite); //create a new edge that bisects 
                     bisector = new HalfEdge(e, 0); //create a new HalfEdge, setting its elPm field to 0			
-                    EdgeList.ElInsert(lbnd, bisector); //insert this new bisector edge between the left and right vectors in a linked list	
+                    EdgeList.ElInsert(leftBound, bisector); //insert this new bisector edge between the left and right vectors in a linked list	
 
-                    if ((p = Intersect(lbnd, bisector)) != null)//if the new bisector intersects with the left edge, remove the left edge's vertex, and put in the new one
-                        queue.PQinsert(queue.Delete(lbnd), p, p.Distance(newsite));
+                    if ((p = Intersect(leftBound, bisector)) != null)//if the new bisector intersects with the left edge, remove the left edge's vertex, and put in the new one
+                        queue.PQinsert(queue.Delete(leftBound), p, p.Distance(newsite));
 
-                    lbnd = bisector;
+                    leftBound = bisector;
                     bisector = new HalfEdge(e, 1); //create a new HalfEdge, setting its elPm field to 1
-                    EdgeList.ElInsert(lbnd, bisector); //insert the new HE to the right of the original bisector earlier in the IF stmt
+                    EdgeList.ElInsert(leftBound, bisector); //insert the new HE to the right of the original bisector earlier in the IF stmt
 
                     if ((p = Intersect(bisector, rbnd)) != null)//if this new bisector intersects with the
                         queue.PQinsert(bisector, p, p.Distance(newsite)); //push the HE into the ordered linked list of vertices
@@ -433,17 +415,17 @@ namespace Voronoi
                 }
                 else if (!queue.IsEmpty())
                 { /* intersection is smallest - this is a vector event */
-                    lbnd = queue.ExtractMin(); //pop the HalfEdge with the lowest vector off the ordered list of vectors				
-                    var llbnd = lbnd.ElLeft;
-                    rbnd = lbnd.ElRight; //get the HalfEdge to the right of the above HE
+                    leftBound = queue.ExtractMin(); //pop the HalfEdge with the lowest vector off the ordered list of vectors				
+                    var llbnd = leftBound.ElLeft;
+                    rbnd = leftBound.ElRight; //get the HalfEdge to the right of the above HE
                     var rrbnd = rbnd.ElRight;
-                    bot = Leftreg(lbnd); //get the Site to the left of the left HE which it bisects
+                    bot = Leftreg(leftBound); //get the Site to the left of the left HE which it bisects
                     var top = Rightreg(rbnd);
 
-                    var v = lbnd.Vertex;
-                    Endpoint(lbnd.ElEdge, lbnd.ElPm, v); //set the endpoint of the left HalfEdge to be this vector
+                    var v = leftBound.Vertex;
+                    Endpoint(leftBound.ElEdge, leftBound.ElPm, v); //set the endpoint of the left HalfEdge to be this vector
                     Endpoint(rbnd.ElEdge, rbnd.ElPm, v); //set the endpoint of the right HalfEdge to be this vector
-                    list.Delete(lbnd); //mark the lowest HE for deletion - can't delete yet because there might be pointers to it in Hash Map	
+                    list.Delete(leftBound); //mark the lowest HE for deletion - can't delete yet because there might be pointers to it in Hash Map	
                     queue.Delete(rbnd); //remove all vertex events to do with the  right HE
                     list.Delete(rbnd); //mark the right HE for deletion - can't delete yet because there might be pointers to it in Hash Map	
                     var pm = 0;
@@ -475,8 +457,8 @@ namespace Voronoi
                 else break;
             }
 
-        for (lbnd = list.LeftEnd.ElRight; lbnd != list.RightEnd; lbnd = lbnd.ElRight)
-                ClipLine(lbnd.ElEdge);
+        for (leftBound = list.LeftEnd.ElRight; leftBound != list.RightEnd; leftBound = leftBound.ElRight)
+                ClipLine(leftBound.ElEdge);
         }
 
         private static bool DblEql(double a, double b) => Math.Abs(a - b) < 0.00000000001;
