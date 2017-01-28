@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Voronoi
 {
@@ -392,7 +390,7 @@ namespace Voronoi
                 //if the lowest site has a smaller y value than the lowest vector intersection, process the site
                 //otherwise process the vector intersection		
 
-                if (newsite != null && (queue.IsEmpty() || newsite.Y < newintstar.Y || (DblEql(newsite.Y, newintstar.Y) && newsite.X < newintstar.X)))
+                if (newintstar != null && (newsite != null && (queue.IsEmpty() || newsite.Y < newintstar.Y || (DblEql(newsite.Y, newintstar.Y) && newsite.X < newintstar.X))))
                 { /* new site is smallest - this is a site event*/
                     leftBound = list.LeftBound(newsite); //get the first HalfEdge to the LEFT of the new site
                     rbnd = leftBound.ElRight; //get the first HalfEdge to the RIGHT of the new site
@@ -422,9 +420,9 @@ namespace Voronoi
                     bot = Leftreg(leftBound); //get the Site to the left of the left HE which it bisects
                     var top = Rightreg(rbnd);
 
-                    var v = leftBound.Vertex;
-                    Endpoint(leftBound.ElEdge, leftBound.ElPm, v); //set the endpoint of the left HalfEdge to be this vector
-                    Endpoint(rbnd.ElEdge, rbnd.ElPm, v); //set the endpoint of the right HalfEdge to be this vector
+                    var leftBoundVertex = leftBound.Vertex;
+                    Endpoint(leftBound.ElEdge, leftBound.ElPm, leftBoundVertex); //set the endpoint of the left HalfEdge to be this vector
+                    Endpoint(rbnd.ElEdge, rbnd.ElPm, leftBoundVertex); //set the endpoint of the right HalfEdge to be this vector
                     list.Delete(leftBound); //mark the lowest HE for deletion - can't delete yet because there might be pointers to it in Hash Map	
                     queue.Delete(rbnd); //remove all vertex events to do with the  right HE
                     list.Delete(rbnd); //mark the right HE for deletion - can't delete yet because there might be pointers to it in Hash Map	
@@ -442,7 +440,7 @@ namespace Voronoi
                     //the formula of the line, and assigns a line number to it
                     bisector = new HalfEdge(e, pm); //create a HE from the Edge 'e', and make it point to that edge with its elEdge field
                     EdgeList.ElInsert(llbnd, bisector); //insert the new bisector to the right of the left HE
-                    Endpoint(e, 1 - pm, v); //set one endpoint to the new edge to be the vector point 'v'.
+                    Endpoint(e, 1 - pm, leftBoundVertex); //set one endpoint to the new edge to be the vector point 'v'.
                     //If the site to the left of this bisector is higher than the right
                     //Site, then this endpoint is put in position 0; otherwise in pos 1
 
