@@ -4,6 +4,7 @@ using System.Linq;
 using System.Drawing;
 using ColorMine.ColorSpaces;
 using ColorMine.ColorSpaces.Comparisons;
+using Voronoi;
 
 namespace ImageComparer
 {
@@ -42,7 +43,7 @@ namespace ImageComparer
             return deltaEList.Average();
         }
 
-        public List<double> CalculateRegionsDeltaEList()
+        public List<double> CalculateRegionsDeltaEList(List<IntPoint2D> listOfPoints, IntPoint2D originPoint)
         {
             // TODO do something Linq like to compare them
 
