@@ -70,21 +70,21 @@ namespace Voronoi
         {
             var intPointList = new List<IntPoint2D>();
             var intPointQueue = new Queue<IntPoint2D>();
-            var point = new IntPoint2D(origin);
-            intPointQueue.Enqueue(point);
+            var originPoint = new IntPoint2D(origin);
+            intPointQueue.Enqueue(originPoint);
 
             while (intPointQueue.Count > 0)
             {
-                var p = intPointQueue.Dequeue();
+                var point = intPointQueue.Dequeue();
 
                 //To deal with odd shapes, we might add something to the queue then process the row already
                 //If we do this row, we already have the row above/below in the queue. So we can skip this whole thing
-                if (array[p.X,p.Y]) continue;
+                if (array[point.X,point.Y]) continue;
 
                 // Set w and e equal to p
                 //East and west should represent bounds of valid, inclusive
-                var eastPoint = new IntPoint2D(p);
-                var westPoint = new IntPoint2D(p);
+                var eastPoint = new IntPoint2D(point);
+                var westPoint = new IntPoint2D(point);
                 
                 // Move w to the west until the color of the node to the west of w no longer matches (or OOB)
                 while (!(westPoint.X <= 0 || array[westPoint.X-1, westPoint.Y]))
@@ -98,15 +98,15 @@ namespace Voronoi
                 // TODO might be able to use LINQ for this for loop
                 for (int x = westPoint.X; x <= eastPoint.X; x++)
                 {
-                    array[x, p.Y] = true;//Set node
-                    intPointList.Add(new IntPoint2D(x,p.Y));
+                    array[x, point.Y] = true;//Set node
+                    intPointList.Add(new IntPoint2D(x,point.Y));
 
                     // If the node above/below is empty, add that node to pq
-                    if (!(p.Y == array.GetUpperBound(1) || array[x, p.Y + 1]))
-                        intPointQueue.Enqueue(new IntPoint2D(x, p.Y + 1));
+                    if (!(point.Y == array.GetUpperBound(1) || array[x, point.Y + 1]))
+                        intPointQueue.Enqueue(new IntPoint2D(x, point.Y + 1));
 
-                    if (!( p.Y == 0 || array[x, p.Y - 1]))
-                        intPointQueue.Enqueue(new IntPoint2D(x, p.Y - 1));
+                    if (!( point.Y == 0 || array[x, point.Y - 1]))
+                        intPointQueue.Enqueue(new IntPoint2D(x, point.Y - 1));
                 }
             }
             return intPointList;
