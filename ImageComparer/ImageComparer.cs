@@ -44,7 +44,8 @@ namespace ImageComparer
 
         public List<double> CalculateRegionsDeltaEList()
         {
-            // TODO do something
+            // TODO do something Linq like to compare them
+
             return new List<double>();
         }
 

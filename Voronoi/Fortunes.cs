@@ -164,8 +164,8 @@ namespace Voronoi
 
             newedge.Reg[0] = s1; //store the sites that this edge is bisecting
             newedge.Reg[1] = s2;
-            newedge.Ep[0] = null; //to begin with, there are no endpoints on the bisector - it goes to infinity
-            newedge.Ep[1] = null;
+            newedge.EndPoints[0] = null; //to begin with, there are no endpoints on the bisector - it goes to infinity
+            newedge.EndPoints[1] = null;
 
             var dx = s2.X - s1.X;
             var dy = s2.Y - s1.Y;
@@ -230,8 +230,8 @@ namespace Voronoi
 
         private void Endpoint(Edge e, int lr, Point2D s)
         {
-            e.Ep[lr] = s;
-            if (e.Ep[1 - lr] == null)
+            e.EndPoints[lr] = s;
+            if (e.EndPoints[1 - lr] == null)
                 return;
 
             ClipLine(e);
@@ -258,13 +258,13 @@ namespace Voronoi
 
             if (DblEql(e.A, 1.0) && e.B >= 0.0)
             {
-                s1 = e.Ep[1];
-                s2 = e.Ep[0];
+                s1 = e.EndPoints[1];
+                s2 = e.EndPoints[0];
             }
             else
             {
-                s1 = e.Ep[0];
-                s2 = e.Ep[1];
+                s1 = e.EndPoints[0];
+                s2 = e.EndPoints[1];
             }
 
             if (DblEql(e.A, 1.0))
@@ -459,7 +459,7 @@ namespace Voronoi
 
         for (leftBound = list.LeftEnd.ElRight; leftBound != list.RightEnd; leftBound = leftBound.ElRight)
                 ClipLine(leftBound.ElEdge);
-        }
+        } //TODO make linq
 
         private static bool DblEql(double a, double b) => Math.Abs(a - b) < 0.00000000001;
 
