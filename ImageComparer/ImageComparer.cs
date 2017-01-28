@@ -42,6 +42,12 @@ namespace ImageComparer
             return deltaEList.Average();
         }
 
+        public List<double> CalculateRegionsDeltaEList()
+        {
+            // TODO do something
+            return new List<double>();
+        }
+
 
     }
 }
