@@ -39,8 +39,8 @@ namespace Voronoi
 
         public void OutputFile(int width, int height)
         {
-            //Visual output
-            var writer = new System.IO.StreamWriter(@"D:\MyDocs\Documents\output.html");
+            //Visual output 
+            var writer = new System.IO.StreamWriter(@"D:\MyDocs\Documents\output.html"); //TODO make it a relative path
             writer.WriteLine("<!DOCTYPE html>\n<html>\n<head>\n<title>\nTitle</title>\n</head>\n<body>\n<canvas id=\"myCanvas\" width=\"" + width + "\" height=\"" + height + "\" style=\"border:1px solid #d3d3d3;\">\nWords"
                     + "</canvas>\n\n<script>\nvar c = document.getElementById(\"myCanvas\");\nvar ctx = c.getContext(\"2d\");\n\n<!--Points-->");
 
@@ -86,7 +86,7 @@ namespace Voronoi
                 var eastPoint = new IntPoint2D(point);
                 var westPoint = new IntPoint2D(point);
                 
-                // Move w to the west until the color of the node to the west of w no longer matches (or OOB)
+                // Move w to the west until the color of the node to the west of width no longer matches (or OOB)
                 while (!(westPoint.X <= 0 || array[westPoint.X-1, westPoint.Y]))
                     westPoint.X = westPoint.X - 1;
 
@@ -140,38 +140,38 @@ namespace Voronoi
         /**
          * For sanity-checking region output. And it looks kinda neat
          */
-        public void PrintRegions(int w, int h)
+        public void PrintRegions(int width, int height)
         {
             var origins = Sites;
-            var booArray = OutputLines(w, h);
-            var array = new string[w,h];
+            var booArray = OutputLines(width, height);
+            var array = new string[width,height];
 
-            //Carry over lines
-            for (int i = 0; i<w; i++)
+            //Carry over lines //TODO maybe use LINQ?
+            for (int i = 0; i<width; i++)
             {
-                for (int j = 0; j<h; j++)
+                for (int j = 0; j<height; j++)
                 {
                     if (booArray[i, j])
                         array[i, j] = "X";
                 }
             }
 
-            //Add regions
+            //Add regions //TODO maybe use LINQ?
             foreach (var site in origins)
             {
                 var region = OutputRegion(site, booArray);
-
+                //TODO maybe use LINQ?
                 foreach (var point in region)
                     array[point.X, point.Y] = "/";
                 array[(int)site.X, (int)site.Y] = "O";
             }
-            
 
-            //Print block
+
+            //Print block //TODO maybe use LINQ?
             Console.Out.WriteLine("Regions:");
-            for (int y = h-1; y >= 0; y--)
+            for (int y = height-1; y >= 0; y--)
             {
-                for (int x = 0; x < w; x++)
+                for (int x = 0; x < width; x++)
                 {
                     Console.Out.Write(array[x,y]);
                 }
