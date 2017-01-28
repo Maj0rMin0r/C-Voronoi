@@ -68,14 +68,14 @@ namespace Voronoi
          */
         public List<IntPoint2D> OutputRegion(Point2D origin, bool[,] array)
         {
-            var points = new List<IntPoint2D>();
-            var pq = new Queue<IntPoint2D>();
+            var intPointList = new List<IntPoint2D>();
+            var intPointQueue = new Queue<IntPoint2D>();
             var point = new IntPoint2D(origin);
-            pq.Enqueue(point);
+            intPointQueue.Enqueue(point);
 
-            while (pq.Count > 0)
+            while (intPointQueue.Count > 0)
             {
-                var p = pq.Dequeue();
+                var p = intPointQueue.Dequeue();
 
                 //To deal with odd shapes, we might add something to the queue then process the row already
                 //If we do this row, we already have the row above/below in the queue. So we can skip this whole thing
@@ -98,17 +98,17 @@ namespace Voronoi
                 for (int x = w.X; x <= e.X; x++)
                 {
                     array[x, p.Y] = true;//Set node
-                    points.Add(new IntPoint2D(x,p.Y));
+                    intPointList.Add(new IntPoint2D(x,p.Y));
 
                     // If the node above/below is empty, add that node to pq
                     if (!(p.Y == array.GetUpperBound(1) || array[x, p.Y + 1]))
-                        pq.Enqueue(new IntPoint2D(x, p.Y + 1));
+                        intPointQueue.Enqueue(new IntPoint2D(x, p.Y + 1));
 
                     if (!( p.Y == 0 || array[x, p.Y - 1]))
-                        pq.Enqueue(new IntPoint2D(x, p.Y - 1));
+                        intPointQueue.Enqueue(new IntPoint2D(x, p.Y - 1));
                 }
             }
-            return points;
+            return intPointList;
         }
 
         /**
