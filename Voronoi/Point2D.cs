@@ -8,8 +8,8 @@ namespace Voronoi
     */
     public class Point2D
     {
-        internal double X { get; set; }
-        internal double Y { get; set; }
+        public double X { get; set; }
+        public double Y { get; set; }
 
         public Point2D(double x, double y)
         {
@@ -31,8 +31,8 @@ namespace Voronoi
      */
     public class IntPoint2D
     {
-        internal int X { get; set; }
-        internal int Y { get; set; }
+        public int X { get; set; }
+        public int Y { get; set; }
 
         public IntPoint2D(int x, int y)
         {

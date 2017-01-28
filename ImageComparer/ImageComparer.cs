@@ -15,8 +15,6 @@ namespace ImageComparer
             var deltaEList = new List<double>();
             var voronoiBitmap = Image.FromFile(voronoiPath) as Bitmap;
             var originalBitmap = Image.FromFile(originalImagePath) as Bitmap;
-//            try
-//            {
             for (var x = 0; x < voronoiBitmap.Width; x++)
             {
                 for (var y = 0; y < voronoiBitmap.Height; y++)
@@ -29,27 +27,16 @@ namespace ImageComparer
                     deltaEList.Add(deltaE);
                 }
             }
-//            }
-//            catch (NullReferenceException nullRefExecption)
-//            {
-//                
-//            }
-            // TODO remove this foreach loop later. use it to look at the values we get back
-//            foreach (var deltaE in deltaEList)
-//            {
-//                Console.WriteLine(deltaE);
-//            }
-            
             return deltaEList.Average();
         }
 
-        public List<double> CalculateRegionsDeltaEList(List<IntPoint2D> listOfPoints, IntPoint2D originPoint)
+        public List<double> CalculateRegionsDeltaEList(Bitmap image, List<IntPoint2D> listOfPoints, IntPoint2D originPoint)
         {
-            // TODO do something Linq like to compare them
-
-            return new List<double>();
+            var originPixelColor = image.GetPixel(originPoint.X, originPoint.Y);
+            var originPixelRgb = new Rgb { R = originPixelColor.R, B = originPixelColor.B, G = originPixelColor.G };
+            return listOfPoints.Select(point => image.GetPixel(point.X, point.Y))
+                .Select(imagePixelColor => new Rgb {R = imagePixelColor.R, B = imagePixelColor.B, G = imagePixelColor.G})
+                .Select(imageRgb => imageRgb.Compare(originPixelRgb, new CieDe2000Comparison())).ToList();
         }
-
-
     }
 }
