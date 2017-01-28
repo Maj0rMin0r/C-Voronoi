@@ -83,19 +83,20 @@ namespace Voronoi
 
                 // Set w and e equal to p
                 //East and west should represent bounds of valid, inclusive
-                var e = new IntPoint2D(p);
-                var w = new IntPoint2D(p);
+                var eastPoint = new IntPoint2D(p);
+                var westPoint = new IntPoint2D(p);
                 
                 // Move w to the west until the color of the node to the west of w no longer matches (or OOB)
-                while (!(w.X <= 0 || array[w.X-1, w.Y]))
-                    w.X = w.X - 1;
+                while (!(westPoint.X <= 0 || array[westPoint.X-1, westPoint.Y]))
+                    westPoint.X = westPoint.X - 1;
 
                 // Move e to the east until the color of the node to the east of e no longer matches (or OOB)
-                while (!(e.X >= array.GetUpperBound(0) || array[e.X+1, e.Y]))
-                    e.X = e.X + 1;
+                while (!(eastPoint.X >= array.GetUpperBound(0) || array[eastPoint.X+1, eastPoint.Y]))
+                    eastPoint.X = eastPoint.X + 1;
 
                 // For each node n between w and e:
-                for (int x = w.X; x <= e.X; x++)
+                // TODO might be able to use LINQ for this for loop
+                for (int x = westPoint.X; x <= eastPoint.X; x++)
                 {
                     array[x, p.Y] = true;//Set node
                     intPointList.Add(new IntPoint2D(x,p.Y));
