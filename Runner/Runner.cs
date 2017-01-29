@@ -23,29 +23,29 @@ namespace Runner
 
         public static readonly Bitmap OriginalImage;
         
-        private static void Main2()
-        {
-            Console.Out.WriteLine("Started");
-            var output = Fortunes.Run(Width, Height, NumSites);
-            var lines = output.OutputLines(Width, Height);
-            var origins = output.Sites;
-
-            output.OutputConsole();
-
-            output.OutputFile(Width, Height);
-            Console.Out.WriteLine("File Created");
-
-
-            foreach (var site in origins)
-            {
-                var region = output.OutputRegion(site, lines);
-                //TODO Process regions
-            }
-
-            //output.PrintRegions(Width, Height);
-
-            Console.Out.WriteLine("Finished");
-        }
+//        private static void Main2()
+//        {
+//            Console.Out.WriteLine("Started");
+//            var output = Fortunes.Run(Width, Height, NumSites);
+//            var lines = output.OutputLines(Width, Height);
+//            var origins = output.Sites;
+//
+//            output.OutputConsole();
+//
+//            output.OutputFile(Width, Height);
+//            Console.Out.WriteLine("File Created");
+//
+//
+//            foreach (var site in origins)
+//            {
+//                var region = output.OutputRegion(site, lines);
+//                //TODO Process regions
+//            }
+//
+//            //output.PrintRegions(Width, Height);
+//
+//            Console.Out.WriteLine("Finished");
+//        }
 
         private static int Main(string[] args)
         {
@@ -78,7 +78,7 @@ namespace Runner
             return 0;
         }
 
-        private static void Run(Bitmap originalImage, Bitmap newImage, int numberOfPointsToPlot)
+        private static void Run(Image originalImage, Bitmap newImage, int numberOfPointsToPlot)
 	    {
             var nums = Enumerable.Range(0, C).ToArray();
             var result = new ConcurrentDictionary<VoronoiOutput, double>();
@@ -86,40 +86,14 @@ namespace Runner
 	        Parallel.ForEach(nums, _ =>
 	            {
                     var voronoiOutput = Fortunes.Run(originalImage.Width, originalImage.Height, numberOfPointsToPlot);
-                    //call regions thing to get the double
-
                     var averageDeltaE = voronoiOutput.CalculateAccuracy(ReadonlyBitmap.GetSnapshot(originalImage.Width, originalImage.Height));
-                    //calculateDeltaE
-                                         
-                    //either of these work, we just have to choose which one at some point
                     result.TryAdd(voronoiOutput, averageDeltaE);
-	                //result.AddOrUpdate(voronoiOutput, 0.0, (k,v) => 0.0);
 	            });
-	        //var bestVoronoi = result.OrderBy(r => r.Value).Min().Key;
             var bestVoronoi = result.Aggregate((l, r) => l.Value < r.Value ? l : r).Key;
-
             var writer = new Drawer(newImage);
-            foreach (var site in bestVoronoi.Sites)
-            {
-                var lines = bestVoronoi.OutputLines(newImage.Width, newImage.Height);
-                var intPoint2DList = bestVoronoi.OutputRegion(site, lines);
-                /*
-                 * Pseudocode
-                 * For all the points in the list, color the points
-                 */
-                var originPixelColorBrush = new SolidBrush(originalImage.GetPixel((int)site.X, (int)site.Y));
-                foreach (var point in intPoint2DList)
-                {
-                    writer.FillPoint(new Point(point.X, point.Y), originPixelColorBrush);
-                    //finalBitmap.SetPixel(point.X, point.Y, originPixelColor);
-                }
-
-
-
-                // allDeltaEList.AddRange(imageComparer.CalculateRegionsDeltaEList(imageBitmap, OutputRegion(site, lines), new IntPoint2D(site)));
-            }
-            //writer.DrawLines();
-            //writer.FillRegion();
+	        writer.DrawVoronoi(bestVoronoi);
+            writer.SaveToNewImageFile("a.png", @"C:\Users\Jim\MSOE\C-Voronoi\images\");
+            writer.Dispose();
         }
 	}
 }
