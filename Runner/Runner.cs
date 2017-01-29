@@ -16,7 +16,7 @@ namespace Runner
 
         private static int Main(string[] args)
         {
-            if (args.Length < 2)
+            if (args.Length < 4)
             {
                 Console.WriteLine(MissingArgs);
                 return 1;
@@ -29,7 +29,7 @@ namespace Runner
                 var bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, bmp.PixelFormat);
                 var newBitmap = new Bitmap(bmp.Width, bmp.Height, bmpData.Stride, bmp.PixelFormat, bmpData.Scan0);
                 bmp.UnlockBits(bmpData);
-                Run(bmp, newBitmap, numberOfPointsToPlot);
+                Run(bmp, newBitmap, numberOfPointsToPlot, args[2], args[3]);
             }
             catch (Exception e)
             {
@@ -40,7 +40,7 @@ namespace Runner
             return 0;
         }
 
-        private static void Run(Image originalImage, Bitmap newImage, int numberOfPointsToPlot)
+        private static void Run(Image originalImage, Bitmap newImage, int numberOfPointsToPlot, string fileName, string fileDirectory)
 	    {
             var nums = Enumerable.Range(0, C).ToArray();
             var result = new ConcurrentDictionary<VoronoiOutput, double>();
@@ -54,7 +54,7 @@ namespace Runner
 	        using (var writer = new Drawer(newImage))
 	        {
                 writer.DrawVoronoi(bestVoronoi);
-                writer.SaveToNewImageFile("a.png", @"C:\Users\Jim\MSOE\C-Voronoi\images\");
+                writer.SaveToNewImageFile(fileName, @fileDirectory);
             }
         }
 	}
