@@ -4,15 +4,10 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.IO;
 using System.Linq;
-using System.Windows;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using Voronoi;
 using Brush = System.Drawing.Brush;
 using Color = System.Drawing.Color;
 using Pen = System.Drawing.Pen;
-using PixelFormat = System.Drawing.Imaging.PixelFormat;
-using Point = System.Drawing.Point;
 
 namespace VoronoiDrawer
 {
@@ -72,26 +67,6 @@ namespace VoronoiDrawer
             }
         }
 
-//        public void DrawLine(double[] xyxy) => DrawLine(xyxy, new Pen(Color.Black));
-//
-//        public void DrawLine(double[] xyxy, Color color) => DrawLine(xyxy, new Pen(color));
-
-//        public void DrawLine(double[] xyxy, Pen pen)
-//        {
-//            var pointA = new PointF((float)xyxy[0], (float)xyxy[1]);
-//            var pointB = new PointF((float)xyxy[2], (float)xyxy[3]);
-//            //_canvas.DrawLine(pen, pointA, pointB);
-//            _writeableBitmap.Lock();
-//            var bmp = new Bitmap(_writeableBitmap.PixelWidth, _writeableBitmap.PixelHeight,
-//                _writeableBitmap.BackBufferStride, PixelFormat.Format32bppPArgb, _writeableBitmap.BackBuffer);
-//            var g = Graphics.FromImage(bmp);
-//            g.DrawLine(pen, pointA, pointB);
-//            g.Dispose();
-//            bmp.Dispose();
-//            _writeableBitmap.AddDirtyRect(new Int32Rect((int)xyxy[0], (int)xyxy[1], (int)xyxy[2], (int)xyxy[3]));
-//            _writeableBitmap.Unlock();
-//        }
-
         public void DrawLines(Collection<PointF[]> lines, Pen pen)
         {
             foreach (var line in lines)
@@ -124,12 +99,6 @@ namespace VoronoiDrawer
                 }
             }
         }
-
-        //only needed if there is an managedresources to be disposed of
-        //        ~VoronoiWriter()
-        //        {
-        //            Dispose(false);
-        //        }
 
         public void Dispose()
         {
