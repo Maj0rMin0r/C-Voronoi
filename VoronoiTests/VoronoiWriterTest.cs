@@ -15,7 +15,7 @@ namespace VoronoiTests
         public void TestMethod1()
         {
             var writer = new Drawer(420, 420, FileName, FileDirectory);
-            writer.DrawLine(new double[] { 0, 210, 420, 210 });
+//            writer.DrawLine(new double[] { 0, 210, 420, 210 });
             //writer.SaveToNewImageFile(FileName, FileDirectory);
         }
     }
