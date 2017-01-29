@@ -75,7 +75,7 @@ namespace Runner
             return 0;
         }
 
-        private static void Run(Image originalImage, Bitmap newImage, int numberOfPointsToPlot)
+        private static void Run(Bitmap originalImage, Bitmap newImage, int numberOfPointsToPlot)
 	    {
             var nums = Enumerable.Range(0, C).ToArray();
             var result = new ConcurrentDictionary<VoronoiOutput, double>();
@@ -83,11 +83,11 @@ namespace Runner
 	            {
                     var voronoiOutput = Fortunes.Run(originalImage.Width, originalImage.Height, numberOfPointsToPlot);
                     //call regions thing to get the double
-	                
+	                var averageDeltaE = voronoiOutput.CalculateAccuracy(originalImage);
                     //calculateDeltaE
                                          
                     //either of these work, we just have to choose which one at some point
-                    result.TryAdd(voronoiOutput, 0.0);
+                    result.TryAdd(voronoiOutput, averageDeltaE);
 	                //result.AddOrUpdate(voronoiOutput, 0.0, (k,v) => 0.0);
 	            });
 	        var bestVoronoi = result.OrderBy(r => r.Value).Min().Key;
