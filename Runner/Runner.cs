@@ -1,5 +1,4 @@
 ﻿using System;
-using System.CodeDom.Compiler;
 using System.Collections.Concurrent;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -16,9 +15,9 @@ namespace Runner
     internal class Runner
     {
         private const string MissingArgs = "Error: missing file location or number of plot points";
-        private const int Width = 10;
-	    private const int Height = 10;
-        private const int NumSites = 2;
+        private const int Width = 1000;
+	    private const int Height = 1000;
+        private const int NumSites = 250;
 
         private const int C = 50;
 
@@ -43,7 +42,7 @@ namespace Runner
                 //TODO Process regions
             }
 
-            output.PrintRegions(Width, Height);
+            //output.PrintRegions(Width, Height);
 
             Console.Out.WriteLine("Finished");
         }
