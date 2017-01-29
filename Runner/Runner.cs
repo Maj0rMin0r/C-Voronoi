@@ -23,7 +23,7 @@ namespace Runner
 
         public static readonly Bitmap OriginalImage;
         
-        private static void Main2()
+        private static void Main()
         {
             Console.Out.WriteLine("Started");
             var output = Fortunes.Run(Width, Height, NumSites);
@@ -47,7 +47,7 @@ namespace Runner
             Console.Out.WriteLine("Finished");
         }
 
-        private static int Main(string[] args)
+        private static int Main2(string[] args)
         {
             if (args.Length < 2)
             {

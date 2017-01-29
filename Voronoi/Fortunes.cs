@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Voronoi
 {
@@ -27,12 +29,6 @@ namespace Voronoi
         public int ImageWidth { get; private set; }
         public int ImageHeight { get; private set; }
         public int NumSites { get; private set; }
-
-        public Fortunes()
-        {
-            _siteidx = 0;
-            _allEdges = null;
-        }
 
         /**
          * Creates object
@@ -244,117 +240,53 @@ namespace Voronoi
         private void ClipLine(Edge e)
         {
             Point2D s1, s2;
-
-            var x1 = e.Reg[0].X;
-            var x2 = e.Reg[1].X;
-            var y1 = e.Reg[0].Y;
-            var y2 = e.Reg[1].Y;
+            double x1;
+            double x2;
+            double y1;
+            double y2;
 
             //if the distance between the two points this line was created from is less than 
             //the square root of 2, then ignore it
-            if (Math.Sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1)) < 1) return;
-
-            if (DblEql(e.A, 1.0) && e.B >= 0.0)
-            {
-                s1 = e.EndPoints[1];
-                s2 = e.EndPoints[0];
-            }
-            else
-            {
-                s1 = e.EndPoints[0];
-                s2 = e.EndPoints[1];
-            }
-
+            if (e.Reg[0].Distance(e.Reg[1]) < 1.41421356) return;
+            
+            s1 = DblEql(e.A, 1.0) && e.B >= 0.0 ? e.EndPoints[1] : e.EndPoints[0];
+            s2 = DblEql(e.A, 1.0) && e.B >= 0.0 ? e.EndPoints[0] : e.EndPoints[1];
+            
             if (DblEql(e.A, 1.0))
             {
-                y1 = 1;
-                if (s1 != null && s1.Y > 1)
-                    y1 = s1.Y;
-
-                if (y1 > ImageHeight)
-                    y1 = ImageHeight;
-            
+                y1 = s1 != null && s1.Y > 1 ? s1.Y : 1;
+                y1 = y1 > ImageHeight ? ImageHeight : y1;
                 x1 = e.C - e.B * y1;
-                y2 = ImageHeight;
-                if (s2 != null && s2.Y < ImageHeight)
-                    y2 = s2.Y;
-
-                if (y2 < 1)
-                    y2 = 1;
-
+                y2 = s2 != null && s2.Y < ImageHeight ? s2.Y : ImageHeight;
+                y2 = y2 < 1 ? 1 : y2;
                 x2 = e.C - e.B * y2;
-                if (((x1 > ImageWidth) && (x2 > ImageWidth)) || ((x1 < 1) && (x2 < 1)))
-                    return;
 
-                if (x1 > ImageWidth)
-                {
-                    x1 = ImageWidth;
-                    y1 = (e.C - x1) / e.B;
-                }
-
-                if (x1 < 1)
-                {
-                    x1 = 1;
-                    y1 = (e.C - x1) / e.B;
-                }
-
-                if (x2 > ImageWidth)
-                {
-                    x2 = ImageWidth;
-                    y2 = (e.C - x2) / e.B;
-                }
-
-                if (x2 < 1)
-                {
-                    x2 = 1;
-                    y2 = (e.C - x2) / e.B;
-                }
+                if (((x1 > ImageWidth) && (x2 > ImageWidth)) || ((x1 < 1) && (x2 < 1))) return;
+                
+                x1 = x1>ImageWidth ? ImageWidth : x1;
+                x1 = x1 < 1 ? 1 : x1;
+                y1 = x1 > ImageWidth || x1 < 1 ? (e.C - x1) / e.B  : y1;
+                x2 = x2 > ImageWidth ? ImageWidth : x2;
+                x2 = x2 < 1 ? 1 : x2;
+                y2 = x2 > ImageWidth || x2 < 1 ? (e.C - x2)/e.B : y2;
             }
             else
             {
-                x1 = 1;
-                if (s1 != null && s1.X > 1)
-                    x1 = s1.X;
-
-                if (x1 > ImageWidth)
-                    x1 = ImageWidth;
-
+                x1 = s1 != null && s1.X > 1 ? s1.X : 1;
+                x1 = x1 > ImageWidth ? ImageWidth : x1;
                 y1 = e.C - e.A * x1;
-                x2 = ImageWidth;
-                if (s2 != null && s2.X < ImageWidth)
-                    x2 = s2.X;
-
-                if (x2 < 1)
-                    x2 = 1;
-
+                x2 = s2 != null && s2.X < ImageWidth ? s2.X : ImageWidth;
+                x2 = x2 < 1 ? 1 : x2;
                 y2 = e.C - e.A * x2;
 
-                if (((y1 > ImageHeight) & (y2 > ImageHeight)) | ((y1 < 1) & (y2 < 1)))
-                    return;
-
-                if (y1 > ImageHeight)
-                {
-                    y1 = ImageHeight;
-                    x1 = (e.C - y1) / e.A;
-                }
-
-                if (y1 < 1)
-                {
-                    y1 = 1;
-                    x1 = (e.C - y1) / e.A;
-                }
-
-                if (y2 > ImageHeight)
-                {
-                    y2 = ImageHeight;
-                    x2 = (e.C - y2) / e.A;
-                }
-
-                if (y2 < 1)
-                {
-                    y2 = 1;
-                    x2 = (e.C - y2) / e.A;
-                }
+                if (((y1 > ImageHeight) & (y2 > ImageHeight)) | ((y1 < 1) & (y2 < 1))) return;
+                
+                y1 = y1 > ImageHeight ? ImageHeight : y1;
+                y1 = y1 < 1 ? 1 : y1;
+                x1 = y1 > ImageHeight || y1 < 1 ? (e.C - y1)/e.A : x1;
+                y2 = y2 > ImageHeight ? ImageHeight : y2;
+                y2 = y2 < 1 ? 1 : y2;
+                x2 = y2 > ImageHeight || y2 < 1 ? (e.C - y2) / e.A : x2;
             }
 
             PushGraphEdge(x1, y1, x2, y2);
@@ -465,15 +397,14 @@ namespace Voronoi
 
         private static Point2D[] GetSet(int size, int x, int y)
         {
-            var set = new Point2D[size];
+            var dict = new HashSet<Point2D>();
             var rand = new Random();
 
-            for (int i = 0; i < size; i++)
-            {
-                set[i] = new Point2D(rand.Next(1, x), rand.Next(1, y));
-            }
-
-            return set;
+            //Ensures uniqueness
+            while (dict.Count < size)
+                dict.Add(new Point2D(rand.Next(1, x), rand.Next(1, y)));
+            
+            return dict.ToArray();
         }
     }
 }
