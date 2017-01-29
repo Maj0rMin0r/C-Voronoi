@@ -9,8 +9,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Runner", "Runner\Runner.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VoronoiDrawer", "VoronoiWriter\VoronoiDrawer.csproj", "{5D1A59A8-A64D-4FF3-ADE5-FB49EA6A23E4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageComparer", "ImageComparer\ImageComparer.csproj", "{F40F22CE-6545-474B-A9DE-715B9F4525F2}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VoronoiTests", "VoronoiTests\VoronoiTests.csproj", "{FA666874-6363-4F25-BF5E-F748CF16E1E6}"
 EndProject
 Global
@@ -31,10 +29,6 @@ Global
 		{5D1A59A8-A64D-4FF3-ADE5-FB49EA6A23E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5D1A59A8-A64D-4FF3-ADE5-FB49EA6A23E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5D1A59A8-A64D-4FF3-ADE5-FB49EA6A23E4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F40F22CE-6545-474B-A9DE-715B9F4525F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F40F22CE-6545-474B-A9DE-715B9F4525F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F40F22CE-6545-474B-A9DE-715B9F4525F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F40F22CE-6545-474B-A9DE-715B9F4525F2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{FA666874-6363-4F25-BF5E-F748CF16E1E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{FA666874-6363-4F25-BF5E-F748CF16E1E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FA666874-6363-4F25-BF5E-F748CF16E1E6}.Release|Any CPU.ActiveCfg = Release|Any CPU

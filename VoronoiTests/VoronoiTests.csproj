@@ -56,10 +56,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ImageComparer\ImageComparer.csproj">
-      <Project>{f40f22ce-6545-474b-a9de-715b9f4525f2}</Project>
-      <Name>ImageComparer</Name>
-    </ProjectReference>
     <ProjectReference Include="..\VoronoiWriter\VoronoiDrawer.csproj">
       <Project>{5d1a59a8-a64d-4ff3-ade5-fb49ea6a23e4}</Project>
       <Name>VoronoiDrawer</Name>
