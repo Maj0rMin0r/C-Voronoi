@@ -1,4 +1,5 @@
 ﻿using System;
+using System.CodeDom.Compiler;
 using System.Collections.Concurrent;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -89,10 +90,12 @@ namespace Runner
                     result.TryAdd(voronoiOutput, 0.0);
 	                //result.AddOrUpdate(voronoiOutput, 0.0, (k,v) => 0.0);
 	            });
-	        var bestDeltaE = result.Min(r => r.Value);
+	        var bestVoronoi = result.OrderBy(r => r.Value).Min().Key;
+            //var bestVoronoi = result.Aggregate((l, r) => l.Value < r.Value ? l : r).Key;
 
             var writer = new Drawer(newImage);
-            
+            //writer.DrawLines();
+            //writer.FillRegion();
 	    }
 	}
 }
