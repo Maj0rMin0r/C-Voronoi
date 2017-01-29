@@ -14,6 +14,7 @@ namespace Runner
         private const string MissingArgs = "Error: missing file location or number of plot points";
         private const int C = 50;
 
+        
         private static int Main(string[] args)
         {
             if (args.Length < 2)
