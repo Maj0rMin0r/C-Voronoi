@@ -100,8 +100,27 @@ namespace Runner
             var bestVoronoi = result.Aggregate((l, r) => l.Value < r.Value ? l : r).Key;
 
             var writer = new Drawer(newImage);
+            foreach (var site in bestVoronoi.Sites)
+            {
+                var lines = bestVoronoi.OutputLines(newImage.Width, newImage.Height);
+                var intPoint2DList = bestVoronoi.OutputRegion(site, lines);
+                /*
+                 * Pseudocode
+                 * For all the points in the list, color the points
+                 */
+                var originPixelColorBrush = new SolidBrush(originalImage.GetPixel((int)site.X, (int)site.Y));
+                foreach (var point in intPoint2DList)
+                {
+                    writer.FillPoint(new Point(point.X, point.Y), originPixelColorBrush);
+                    //finalBitmap.SetPixel(point.X, point.Y, originPixelColor);
+                }
+
+
+
+                // allDeltaEList.AddRange(imageComparer.CalculateRegionsDeltaEList(imageBitmap, OutputRegion(site, lines), new IntPoint2D(site)));
+            }
             //writer.DrawLines();
             //writer.FillRegion();
-	    }
+        }
 	}
 }
