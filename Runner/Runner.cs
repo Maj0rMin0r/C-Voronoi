@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Voronoi;
 using VoronoiDrawer;
@@ -14,6 +17,8 @@ namespace Runner
         private const int Width = 10;
 	    private const int Height = 10;
         private const int NumSites = 2;
+
+        private const int C = 50;
         
         private static void Main()
         {
@@ -71,26 +76,22 @@ namespace Runner
 
         private static void Run(Image originalImage, Bitmap newImage, int numberOfPointsToPlot)
 	    {
-	        var output = Fortunes.Run(originalImage.Width, originalImage.Height, numberOfPointsToPlot);
-	        while (true)
-	        {
-                //calculate diagrams
-	            while (true)
+            var nums = Enumerable.Range(0, C).ToArray();
+            var result = new ConcurrentDictionary<VoronoiOutput, double>();
+	        Parallel.ForEach(nums, _ =>
 	            {
-                    //calculate regions
-                    Parallel.Invoke(() =>
-                                    {
-                                        //do threaded work here
-                                        //@url -> https://msdn.microsoft.com/en-us/library/dd537609(v=vs.110).aspx
-                                        //returns Collection of De
-                                    });
-                    break;
-	            }
-                //average De
-	            break;
-	        }
-            //call printer
-	        var writer = new Drawer(newImage);
+                    var voronoiOutput = Fortunes.Run(originalImage.Width, originalImage.Height, numberOfPointsToPlot);
+                    //call regions thing to get the double
+	                
+                    //calculateDeltaE
+                                         
+                    //either of these work, we just have to choose which one at some point
+                    result.TryAdd(voronoiOutput, 0.0);
+	                //result.AddOrUpdate(voronoiOutput, 0.0, (k,v) => 0.0);
+	            });
+	        var bestDeltaE = result.Min(r => r.Value);
+
+            var writer = new Drawer(newImage);
             
 	    }
 	}
