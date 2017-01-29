@@ -47,6 +47,12 @@
     <Compile Include="Drawer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Voronoi\Voronoi.csproj">
+      <Project>{4545723C-3E6D-48E0-A35A-7D612E50D6B1}</Project>
+      <Name>Voronoi</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

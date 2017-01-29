@@ -22,32 +22,23 @@ namespace Runner
         private const int C = 50;
 
         public static readonly Bitmap OriginalImage;
-        
-        private static void Main()
+
+        private static void Main2()
         {
             Console.Out.WriteLine("Started");
             var output = Fortunes.Run(Width, Height, NumSites);
-            var lines = output.OutputLines(Width, Height);
-            var origins = output.Sites;
 
             output.OutputConsole();
 
             output.OutputFile(Width, Height);
             Console.Out.WriteLine("File Created");
 
-
-            foreach (var site in origins)
-            {
-                var region = output.OutputRegion(site, lines);
-                //TODO Process regions
-            }
-
             //output.PrintRegions(Width, Height);
 
             Console.Out.WriteLine("Finished");
         }
 
-        private static int Main2(string[] args)
+        private static int Main(string[] args)
         {
             if (args.Length < 2)
             {
@@ -78,7 +69,7 @@ namespace Runner
             return 0;
         }
 
-        private static void Run(Bitmap originalImage, Bitmap newImage, int numberOfPointsToPlot)
+        private static void Run(Image originalImage, Bitmap newImage, int numberOfPointsToPlot)
 	    {
             var nums = Enumerable.Range(0, C).ToArray();
             var result = new ConcurrentDictionary<VoronoiOutput, double>();
@@ -86,21 +77,14 @@ namespace Runner
 	        Parallel.ForEach(nums, _ =>
 	            {
                     var voronoiOutput = Fortunes.Run(originalImage.Width, originalImage.Height, numberOfPointsToPlot);
-                    //call regions thing to get the double
-
                     var averageDeltaE = voronoiOutput.CalculateAccuracy(ReadonlyBitmap.GetSnapshot(originalImage.Width, originalImage.Height));
-                    //calculateDeltaE
-                                         
-                    //either of these work, we just have to choose which one at some point
                     result.TryAdd(voronoiOutput, averageDeltaE);
-	                //result.AddOrUpdate(voronoiOutput, 0.0, (k,v) => 0.0);
 	            });
-	        //var bestVoronoi = result.OrderBy(r => r.Value).Min().Key;
             var bestVoronoi = result.Aggregate((l, r) => l.Value < r.Value ? l : r).Key;
-
             var writer = new Drawer(newImage);
-            //writer.DrawLines();
-            //writer.FillRegion();
-	    }
+	        writer.DrawVoronoi(bestVoronoi);
+            writer.SaveToNewImageFile("a.png", @"C:\Users\Jim\MSOE\C-Voronoi\images\");
+            writer.Dispose();
+        }
 	}
 }
