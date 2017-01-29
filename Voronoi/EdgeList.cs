@@ -41,12 +41,10 @@ namespace Voronoi
             return null;
         }
 
-        internal HalfEdge LeftBound(Point2D p)
+        internal HalfEdge LeftBound(Point2D p, int width)
         {
             /* Use hash table to get close to desired HalfEdge */
-            //var bucket = (int)(p.X / xmax * _HashSize);
-            var bucket = 0;//TODO buckets are broken here too
-            if (bucket < 0) bucket = 0; //make sure that the bucket position in within the range of the hash array
+            var bucket = 0; //make sure that the bucket position in within the range of the hash array
             if (bucket >= _hashSize) bucket = _hashSize - 1;
 
             var he = GetHash(bucket);

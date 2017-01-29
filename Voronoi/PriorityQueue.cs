@@ -27,7 +27,7 @@ namespace Voronoi
 
             he.Vertex = v;
             he.YStar = v.Y + offset;
-            var last = _hash[GetBucket(he)];
+            var last = _hash[GetBucket()];
             while ((next = last.PqNext) != null && (he.YStar > next.YStar || (DblEql(he.YStar, next.YStar) && v.X > next.Vertex.X)))
             {
                 last = next;
@@ -43,7 +43,7 @@ namespace Voronoi
         internal HalfEdge Delete(HalfEdge he)
         {
             if (he.Vertex == null) return he;
-            var last = _hash[GetBucket(he)];
+            var last = _hash[GetBucket()];
             while (last.PqNext != he)
                 last = last.PqNext;
 
@@ -53,11 +53,9 @@ namespace Voronoi
             return he;
         }
 
-        private int GetBucket(HalfEdge he)
+        private int GetBucket()
         {
-            var bucket = (int)(he.YStar / 0 * _hashSize);//TODO 0 used to be _ymax. So buckets should like...work
-            if (bucket < 0)
-                bucket = 0;
+            var bucket = 0;
             if (bucket >= _hashSize)
                 bucket = _hashSize - 1;
             if (bucket < _min)
