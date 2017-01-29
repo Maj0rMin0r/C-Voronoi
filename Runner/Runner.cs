@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Voronoi;
@@ -20,8 +21,10 @@ namespace Runner
         private const int NumSites = 2;
 
         private const int C = 50;
+
+        public static readonly Bitmap OriginalImage;
         
-        private static void Main()
+        private static void Main2()
         {
             Console.Out.WriteLine("Started");
             var output = Fortunes.Run(Width, Height, NumSites);
@@ -45,7 +48,7 @@ namespace Runner
             Console.Out.WriteLine("Finished");
         }
 
-        private static int Main2(string[] args)
+        private static int Main(string[] args)
         {
             if (args.Length < 2)
             {
@@ -57,16 +60,17 @@ namespace Runner
                 var numberOfPointsToPlot = int.Parse(args[0]);
                 // Create a bitmap.
                 var bmp = new Bitmap(args[1]);
+                ReadonlyBitmap.SetSnapshot(bmp, bmp.Width, bmp.Height);
+                //readonlyBmp.SetSnapshot();
                 // Retrieve the bitmap data from the the bitmap.
-                var bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height),
-                ImageLockMode.ReadOnly, bmp.PixelFormat);
+                var bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, bmp.PixelFormat);
                 //Create a new bitmap.
                 var newBitmap = new Bitmap(bmp.Width, bmp.Height, bmpData.Stride, bmp.PixelFormat, bmpData.Scan0);
                 bmp.UnlockBits(bmpData);
                 //calls run
                 Run(bmp, newBitmap, numberOfPointsToPlot);
             }
-            catch (IOException e)
+            catch (Exception e)
             {
                 Console.WriteLine(e);
                 return 1;
@@ -79,19 +83,21 @@ namespace Runner
 	    {
             var nums = Enumerable.Range(0, C).ToArray();
             var result = new ConcurrentDictionary<VoronoiOutput, double>();
+            
 	        Parallel.ForEach(nums, _ =>
 	            {
                     var voronoiOutput = Fortunes.Run(originalImage.Width, originalImage.Height, numberOfPointsToPlot);
                     //call regions thing to get the double
-	                var averageDeltaE = voronoiOutput.CalculateAccuracy(originalImage);
+
+                    var averageDeltaE = voronoiOutput.CalculateAccuracy(ReadonlyBitmap.GetSnapshot(originalImage.Width, originalImage.Height));
                     //calculateDeltaE
                                          
                     //either of these work, we just have to choose which one at some point
                     result.TryAdd(voronoiOutput, averageDeltaE);
 	                //result.AddOrUpdate(voronoiOutput, 0.0, (k,v) => 0.0);
 	            });
-	        var bestVoronoi = result.OrderBy(r => r.Value).Min().Key;
-            //var bestVoronoi = result.Aggregate((l, r) => l.Value < r.Value ? l : r).Key;
+	        //var bestVoronoi = result.OrderBy(r => r.Value).Min().Key;
+            var bestVoronoi = result.Aggregate((l, r) => l.Value < r.Value ? l : r).Key;
 
             var writer = new Drawer(newImage);
             //writer.DrawLines();
