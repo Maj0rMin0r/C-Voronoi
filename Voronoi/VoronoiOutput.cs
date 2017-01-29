@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
 
 namespace Voronoi
 {
@@ -110,6 +112,21 @@ namespace Voronoi
                 }
             }
             return intPointList;
+        }
+
+        /**
+         * return the accuracy (averageDeltaE) of the image
+         */
+        public double CalculateAccuracy(Bitmap imageBitmap)
+        {
+            var allDeltaEList = new List<double>();
+            var imageComparer = new ImageComparer();
+            var lines = OutputLines(imageBitmap.Width, imageBitmap.Height);
+            foreach(var site in Sites)
+            {
+                allDeltaEList.AddRange(imageComparer.CalculateRegionsDeltaEList(imageBitmap, OutputRegion(site, lines), new IntPoint2D(site)));
+            }
+            return allDeltaEList.Average();
         }
 
         /**
