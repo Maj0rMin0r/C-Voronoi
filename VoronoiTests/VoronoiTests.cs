@@ -35,6 +35,8 @@ namespace VoronoiTests
             var region1 = output.OutputRegion(origins[0], lines);
             var region2 = output.OutputRegion(origins[1], lines);
 
+            output.OutputLines(9, 9);
+
             Assert.AreEqual(2, origins.Length);
             Assert.AreEqual(72, region1.Count + region2.Count);
             Assert.AreEqual(36, region1.Count);
