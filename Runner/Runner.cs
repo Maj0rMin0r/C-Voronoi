@@ -12,12 +12,11 @@ namespace Runner
     internal class Runner
     {
         private const string MissingArgs = "Error: missing file location or number of plot points";
-
         private const int C = 50;
 
         private static int Main(string[] args)
         {
-            if (args.Length < 2)
+            if (args.Length < 4)
             {
                 Console.WriteLine(MissingArgs);
                 return 1;
@@ -25,18 +24,13 @@ namespace Runner
             try
             {
                 var numberOfPointsToPlot = int.Parse(args[0]);
-                // Create a bitmap.
                 var bmp = new Bitmap(args[1]);
                 ReadonlyBitmap.SetSnapshot(bmp, bmp.Width, bmp.Height);
-                //readonlyBmp.SetSnapshot();
-                // Retrieve the bitmap data from the the bitmap.
                 var bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, bmp.PixelFormat);
-                //Create a new bitmap.
 //                var newBitmap = new Bitmap(bmp.Width, bmp.Height, bmpData.Stride, bmp.PixelFormat, bmpData.Scan0);
                 var newBitmap = new Bitmap(bmp.Width, bmp.Height, bmp.PixelFormat);
                 bmp.UnlockBits(bmpData);
-                //calls run
-                Run(bmp, newBitmap, numberOfPointsToPlot);
+                Run(bmp, newBitmap, numberOfPointsToPlot, args[2], args[3]);
             }
             catch (Exception e)
             {
@@ -47,11 +41,10 @@ namespace Runner
             return 0;
         }
 
-        private static void Run(Image originalImage, Bitmap newImage, int numberOfPointsToPlot)
+        private static void Run(Image originalImage, Bitmap newImage, int numberOfPointsToPlot, string fileName, string fileDirectory)
 	    {
             var nums = Enumerable.Range(0, C).ToArray();
             var result = new ConcurrentDictionary<VoronoiOutput, double>();
-            
 	        Parallel.ForEach(nums, _ =>
 	            {
                     var voronoiOutput = Fortunes.Run(originalImage.Width, originalImage.Height, numberOfPointsToPlot);
@@ -59,11 +52,11 @@ namespace Runner
                     result.TryAdd(voronoiOutput, averageDeltaE);
 	            });
             var bestVoronoi = result.Aggregate((l, r) => l.Value < r.Value ? l : r).Key;
-            var writer = new Drawer(newImage);
-	        writer.DrawVoronoi(bestVoronoi);
-            //            writer.SaveToNewImageFile("a.png", @"C:\Users\Jim\MSOE\C-Voronoi\images\");
-            writer.SaveToNewImageFile("a.png", @"C:\Users\aaron\Documents\School\Senior\CS4860 (C#)\C-Voronoi\images\");
-            writer.Dispose();
+	        using (var writer = new Drawer(newImage))
+	        {
+                writer.DrawVoronoi(bestVoronoi);
+                writer.SaveToNewImageFile(fileName, @fileDirectory);
+            }
         }
 	}
 }
