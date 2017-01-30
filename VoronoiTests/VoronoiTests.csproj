@@ -56,10 +56,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\VoronoiWriter\VoronoiDrawer.csproj">
-      <Project>{5d1a59a8-a64d-4ff3-ade5-fb49ea6a23e4}</Project>
-      <Name>VoronoiDrawer</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Voronoi\Voronoi.csproj">
       <Project>{4545723C-3E6D-48E0-A35A-7D612E50D6B1}</Project>
       <Name>Voronoi</Name>

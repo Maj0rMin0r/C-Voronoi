@@ -49,6 +49,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Drawer.cs" />
     <Compile Include="EdgeList.cs" />
     <Compile Include="Edge.cs" />
     <Compile Include="Fortunes.cs" />

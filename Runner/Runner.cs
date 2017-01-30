@@ -5,7 +5,6 @@ using System.Drawing.Imaging;
 using System.Linq;
 using System.Threading.Tasks;
 using Voronoi;
-using VoronoiDrawer;
 
 namespace Runner
 {
