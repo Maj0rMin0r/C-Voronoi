@@ -7,15 +7,15 @@ namespace Voronoi
         private static readonly object Locker = new object();
         private static Bitmap _snapshot;
 
-        public static Bitmap GetSnapshot(int width, int height)
+        public static Bitmap Get()
         {
             lock (Locker)
             {
-                return _snapshot == null ? null : new Bitmap(_snapshot, new Size(width, height));
+                return _snapshot == null ? null : new Bitmap(_snapshot);
             }
         }
 
-        public static void SetSnapshot(Bitmap source, int width, int height)
+        public static void Set(Bitmap source, int width, int height)
         {
             var copy = new Bitmap(source, new Size(width, height));
             lock (Locker)

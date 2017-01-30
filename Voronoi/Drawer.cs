@@ -91,7 +91,7 @@ namespace Voronoi
             {
                 var lines = voronoi.OutputLines(_bitmap.Width, _bitmap.Height);
                 var intPoint2DList = voronoi.OutputRegion(site, lines);
-                var regionColor = ReadonlyBitmap.GetSnapshot(_bitmap.Width, _bitmap.Height).GetPixel((int)site.X, (int)site.Y);
+                var regionColor = ReadonlyBitmap.Get().GetPixel((int)site.X, (int)site.Y);
                 foreach (var point in intPoint2DList)
                 {
                     _bitmap.SetPixel(point.X, point.Y, regionColor);

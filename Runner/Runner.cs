@@ -10,7 +10,7 @@ namespace Runner
 {
     internal class Runner
     {
-        private const string MissingArgs = "Error: missing file location or number of plot points";
+        private const string MissingArgs = "Error Args: {Number Of Points To Plot} {Image To Voronoi} {File Name} {File Directory}";
         private const int C = 50;
 
         private static int Main(string[] args)
@@ -23,30 +23,29 @@ namespace Runner
             try
             {
                 var numberOfPointsToPlot = int.Parse(args[0]);
-                var bmp = new Bitmap(args[1]);
-                ReadonlyBitmap.SetSnapshot(bmp, bmp.Width, bmp.Height);
-                var bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, bmp.PixelFormat);
-                var newBitmap = new Bitmap(bmp.Width, bmp.Height, bmpData.Stride, bmp.PixelFormat, bmpData.Scan0);
-                bmp.UnlockBits(bmpData);
-                Run(bmp, newBitmap, numberOfPointsToPlot, args[2], args[3]);
+                var originalImage = new Bitmap(args[1]);
+                ReadonlyBitmap.Set(originalImage, originalImage.Width, originalImage.Height);
+                var bmpData = originalImage.LockBits(new Rectangle(0, 0, originalImage.Width, originalImage.Height), ImageLockMode.ReadOnly, originalImage.PixelFormat);
+                var newBitmap = new Bitmap(originalImage.Width, originalImage.Height, bmpData.Stride, originalImage.PixelFormat, bmpData.Scan0);
+                originalImage.UnlockBits(bmpData);
+                Run(newBitmap, numberOfPointsToPlot, args[2], args[3]);
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
                 return 1;
             }
-
             return 0;
         }
 
-        private static void Run(Image originalImage, Bitmap newImage, int numberOfPointsToPlot, string fileName, string fileDirectory)
+        private static void Run(Bitmap newImage, int numberOfPointsToPlot, string fileName, string fileDirectory)
 	    {
             var nums = Enumerable.Range(0, C).ToArray();
             var result = new ConcurrentDictionary<VoronoiOutput, double>();
 	        Parallel.ForEach(nums, _ =>
 	            {
-                    var voronoiOutput = Fortunes.Run(originalImage.Width, originalImage.Height, numberOfPointsToPlot);
-                    var averageDeltaE = voronoiOutput.CalculateAccuracy(ReadonlyBitmap.GetSnapshot(originalImage.Width, originalImage.Height));
+                    var voronoiOutput = Fortunes.Run(ReadonlyBitmap.Get().Width, ReadonlyBitmap.Get().Height, numberOfPointsToPlot);
+                    var averageDeltaE = voronoiOutput.CalculateAccuracy(ReadonlyBitmap.Get());
                     result.TryAdd(voronoiOutput, averageDeltaE);
 	            });
             var bestVoronoi = result.Aggregate((l, r) => l.Value < r.Value ? l : r).Key;
