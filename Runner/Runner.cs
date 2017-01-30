@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Drawing;
-using System.Drawing.Imaging;
 using System.Linq;
 using System.Threading.Tasks;
 using Voronoi;
@@ -23,11 +22,9 @@ namespace Runner
             try
             {
                 var numberOfPointsToPlot = int.Parse(args[0]);
-                var originalImage = new Bitmap(args[1]);
-                ReadonlyBitmap.Set(originalImage, originalImage.Width, originalImage.Height);
-                var bmpData = originalImage.LockBits(new Rectangle(0, 0, originalImage.Width, originalImage.Height), ImageLockMode.ReadOnly, originalImage.PixelFormat);
-//                var newBitmap = new Bitmap(bmp.Width, bmp.Height, bmpData.Stride, bmp.PixelFormat, bmpData.Scan0);
-                var newBitmap = new Bitmap(bmp.Width, bmp.Height, bmp.PixelFormat);
+                var originalBitmap = new Bitmap(args[1]);
+                ReadonlyBitmap.Set(originalBitmap, originalBitmap.Width, originalBitmap.Height);
+                var newBitmap = new Bitmap(originalBitmap.Width, originalBitmap.Height, originalBitmap.PixelFormat);
                 Run(newBitmap, numberOfPointsToPlot, args[2], args[3]);
             }
             catch (Exception e)
