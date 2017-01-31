@@ -2,10 +2,6 @@
 
 namespace Voronoi
 {
-    /**
-    * Who makes a language without native 2D support?
-    * We are using the vector library to do all the fancy math stuff. We need to make a private class and add our numbers to it
-    */
     public class Point2D
     {
         public double X { get; set; }
@@ -23,12 +19,10 @@ namespace Voronoi
             var b = Math.Pow(botCoord.Y - Y, 2);
             return Math.Sqrt(a + b);
         }
+
         public override string ToString() => "[" + X + "," + Y + "]";
     }
 
-    /**
-     * An integer implementation
-     */
     public class IntPoint2D
     {
         public int X { get; set; }
@@ -51,6 +45,7 @@ namespace Voronoi
             X = p.X;
             Y = p.Y;
         }
+
         public override string ToString() => "[" + X + "," + Y + "]";
     }
 }

@@ -1,12 +1,7 @@
 ﻿using System;
-using System.Collections.ObjectModel;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.IO;
 using System.Linq;
-using Brush = System.Drawing.Brush;
-using Color = System.Drawing.Color;
-using Pen = System.Drawing.Pen;
 
 namespace Voronoi
 {
@@ -17,19 +12,17 @@ namespace Voronoi
 
         private static readonly string[] ValidFileExtensions = { ".jpg", ".bmp", ".gif", ".png" };
 
-        public Drawer(int width, int height, string fileName, string fileDirectory)
-        {
-            _bitmap = new Bitmap(width, height);
-            _canvas = Graphics.FromImage(_bitmap);
-            SaveToNewImageFile(fileName, fileDirectory);
-        }
-
         public Drawer(Bitmap bitmap)
         {
             _bitmap = bitmap;
             _canvas = Graphics.FromImage(_bitmap);
         }
 
+        /// <summary>
+        /// Attempts to always create a new image when creating a new voronoi drawer
+        /// </summary>
+        /// <param name="fileName">file name</param>
+        /// <param name="fileDirectory">file directory</param>
         public void SaveToNewImageFile(string fileName, string fileDirectory)
         {
             if (!Directory.Exists(fileDirectory)) throw new Exception("File directory does not exist.");
@@ -48,43 +41,10 @@ namespace Voronoi
             _bitmap.Save(path);
         }
 
-        public void DrawPoint(double[] xy) => DrawPoint(xy, new SolidBrush(Color.Black));
-
-        public void DrawPoint(double[] xy, Color color) => DrawPoint(xy, new SolidBrush(color));
-
-        public void DrawPoint(double[] xy, Brush brush)
-        {
-            var point = new RectangleF((float)xy[0], (float)xy[1], 1, 1);
-            _canvas.FillRectangle(brush, point);
-        }
-
-        public void DrawPoints(Collection<RectangleF> points, Brush brush)
-        {
-            foreach (var point in points)
-            {
-                _canvas.FillRectangle(brush, point);
-            }
-        }
-
-        public void DrawLines(Collection<PointF[]> lines, Pen pen)
-        {
-            foreach (var line in lines)
-            {
-                _canvas.DrawLines(pen, line);
-            }     
-        }
-
-        public void FillRegion(Collection<PointF[]> pointsMakingUpRegions, Brush brush)
-        {
-            var path = new GraphicsPath();
-            foreach (var points in pointsMakingUpRegions)
-            {
-                path.AddLine(points[0], points[1]);
-            }
-            var region = new Region(path);
-            _canvas.FillRegion(brush, region);
-        }
-
+        /// <summary>
+        /// Takes the VoronoiOuput and fills in the Bitmap accordingly
+        /// </summary>
+        /// <param name="voronoi">output to be drawn</param>
         public void DrawVoronoi(VoronoiOutput voronoi)
         {
             foreach (var site in voronoi.Sites)

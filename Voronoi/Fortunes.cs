@@ -183,8 +183,12 @@ namespace Voronoi
             return newedge;
         }
 
-        // create a new site where the HalfEdges el1 and el2 intersect - note that
-        // the Point in the argument list is not used, don't know why it's there
+        /// <summary>
+        /// Creates a new site where the HalfEdges intersect.
+        /// </summary>
+        /// <param name="el1">HalfEdge to intersect</param>
+        /// <param name="el2">HalfEdge to intersect</param>
+        /// <returns>new site/point at intersection</returns>
         private static Point2D Intersect(HalfEdge el1, HalfEdge el2)
         {
             Edge e;
@@ -291,11 +295,9 @@ namespace Voronoi
             PushGraphEdge(x1, y1, x2, y2);
         }
 
-        /*
-         * implicit parameters: nsites, sqrt_nsites, xmin, xmax, ymin, ymax, deltax,
-         * deltay (can all be estimates). Performance suffers if they are wrong;
-         * better to make nsites, deltax, and deltay too big than too small. (?)
-         */
+         /// <summary>
+         /// Starts fortune's algorithm.
+         /// </summary>
         private void Voronoi()
         {
             Point2D newintstar = null;
