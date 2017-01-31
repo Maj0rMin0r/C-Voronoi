@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Voronoi
 {
@@ -117,15 +119,27 @@ namespace Voronoi
         /**
          * return the accuracy (averageDeltaE) of the image
          */
-        public double CalculateAccuracy(Bitmap imageBitmap)
+        public double CalculateAccuracy()
         {
-            var allDeltaEList = new List<double>();
             var imageComparer = new ImageComparer();
-            var lines = OutputLines(imageBitmap.Width, imageBitmap.Height);
-            foreach(var site in Sites)
+            var originalBitmap = ReadonlyBitmap.Get();
+            var lines = OutputLines(originalBitmap.Width, originalBitmap.Height);
+            //             Non-Parallel
+//            var allDeltaEList = new List<double>();
+//            foreach (var site in Sites)
+//            {
+//                allDeltaEList.AddRange(imageComparer.CalculateRegionsDeltaEList(originalBitmap, OutputRegion(site, lines), new IntPoint2D(site)));
+//            }
+
+            // Parallel
+            var allDeltaEList = new ConcurrentBag<double>();
+            Parallel.ForEach(Sites, site =>
             {
-                allDeltaEList.AddRange(imageComparer.CalculateRegionsDeltaEList(imageBitmap, OutputRegion(site, lines), new IntPoint2D(site)));
-            }
+                //                foreach (var delta in imageComparer.CalculateRegionsDeltaEList(allDeltaEList, originalBitmap, OutputRegion(site, lines), new IntPoint2D(site))) allDeltaEList.Add(delta);
+                //                imageComparer.CalculateRegionsDeltaEList(allDeltaEList, originalBitmap, OutputRegion(site, lines), new IntPoint2D(site));
+                imageComparer.CalculateRegionsDeltaEList(allDeltaEList, OutputRegion(site, lines), new IntPoint2D(site));
+            });
+
             return allDeltaEList.Average();
         }
 

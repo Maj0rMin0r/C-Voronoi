@@ -42,7 +42,7 @@ namespace Runner
 	        Parallel.ForEach(nums, _ =>
 	            {
                     var voronoiOutput = Fortunes.Run(ReadonlyBitmap.Get().Width, ReadonlyBitmap.Get().Height, numberOfPointsToPlot);
-                    var averageDeltaE = voronoiOutput.CalculateAccuracy(ReadonlyBitmap.Get());
+                    var averageDeltaE = voronoiOutput.CalculateAccuracy();
                     result.TryAdd(voronoiOutput, averageDeltaE);
 	            });
             var bestVoronoi = result.Aggregate((l, r) => l.Value < r.Value ? l : r).Key;

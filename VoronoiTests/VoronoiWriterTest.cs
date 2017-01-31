@@ -1,7 +1,5 @@
-﻿using System;
-using System.Drawing;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using VoronoiDrawer;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Voronoi;
 
 namespace VoronoiTests
 {
