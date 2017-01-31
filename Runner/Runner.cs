@@ -23,7 +23,7 @@ namespace Runner
             {
                 var numberOfPointsToPlot = int.Parse(args[0]);
                 var originalBitmap = new Bitmap(args[1]);
-                ReadonlyBitmap.Set(originalBitmap, originalBitmap.Width, originalBitmap.Height);
+                ReadonlyBitmap.Set(originalBitmap);
                 var newBitmap = new Bitmap(originalBitmap.Width, originalBitmap.Height, originalBitmap.PixelFormat);
                 Run(newBitmap, numberOfPointsToPlot, args[2], args[3]);
             }
