@@ -239,7 +239,6 @@ namespace Voronoi
 
         private void ClipLine(Edge e)
         {
-            Point2D s1, s2;
             double x1;
             double x2;
             double y1;
@@ -249,8 +248,8 @@ namespace Voronoi
             //the square root of 2, then ignore it
             if (e.Reg[0].Distance(e.Reg[1]) < 1.41421356) return;
             
-            s1 = DblEql(e.A, 1.0) && e.B >= 0.0 ? e.EndPoints[1] : e.EndPoints[0];
-            s2 = DblEql(e.A, 1.0) && e.B >= 0.0 ? e.EndPoints[0] : e.EndPoints[1];
+            var s1 = DblEql(e.A, 1.0) && e.B >= 0.0 ? e.EndPoints[1] : e.EndPoints[0];
+            var s2 = DblEql(e.A, 1.0) && e.B >= 0.0 ? e.EndPoints[0] : e.EndPoints[1];
             
             if (DblEql(e.A, 1.0))
             {
@@ -323,7 +322,7 @@ namespace Voronoi
                 //otherwise process the vector intersection		
                 if (newsite != null && (queue.IsEmpty() || newsite.Y < newintstar.Y || (DblEql(newsite.Y, newintstar.Y) && newsite.X < newintstar.X)))
                 { /* new site is smallest - this is a site event*/
-                    leftBound = list.LeftBound(newsite, ImageWidth); //get the first HalfEdge to the LEFT of the new site
+                    leftBound = list.LeftBound(newsite); //get the first HalfEdge to the LEFT of the new site
                     rbnd = leftBound.ElRight; //get the first HalfEdge to the RIGHT of the new site
                     bot = Rightreg(leftBound); //if this HalfEdge has no edge, , bot = bottom site (whatever that is)
                     e = Bisect(bot, newsite); //create a new edge that bisects 
@@ -392,7 +391,10 @@ namespace Voronoi
 
         private static bool DblEql(double a, double b) => Math.Abs(a - b) < 0.00000000001;
 
-        /* Return a single in-storage site */
+        /// <summary>
+        /// Gets the next site from sites already in storage.
+        /// </summary>
+        /// <returns>single in-storage site</returns>
         private Point2D NextSite() => _siteidx >= NumSites ? null : _sites[_siteidx++];
 
         private static Point2D[] GetSet(int size, int x, int y)

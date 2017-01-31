@@ -9,6 +9,10 @@ namespace Voronoi
         private readonly int _hashSize;
         private readonly HalfEdge[] _hash;
 
+        /// <summary>
+        /// Initializes the array of HalfEdge's based on the number of sites available.
+        /// </summary>
+        /// <param name="sites">number of sites to create</param>
         internal EdgeList(int sites)
         {
             _hashSize = 2 * (int)Math.Sqrt(sites + 4);
@@ -25,7 +29,11 @@ namespace Voronoi
             _hash[_hashSize - 1] = RightEnd;
         }
 
-        /* Get entry from hash table, pruning any deleted nodes */
+        /// <summary>
+        /// Get entry from hash table, prunes any deleted nodes.
+        /// </summary>
+        /// <param name="b">entry location</param>
+        /// <returns>half edge from table that corresponds to b</returns>
         private HalfEdge GetHash(int b)
         {
             if (b < 0 || b >= _hashSize)
@@ -41,7 +49,12 @@ namespace Voronoi
             return null;
         }
 
-        internal HalfEdge LeftBound(Point2D p, int width)
+        /// <summary>
+        /// Determines the HalfEdge nearest left to the given point.
+        /// </summary>
+        /// <param name="p"></param>
+        /// <returns></returns>
+        internal HalfEdge LeftBound(Point2D p)
         {
             /* Use hash table to get close to desired HalfEdge */
             var bucket = 0; //make sure that the bucket position in within the range of the hash array
@@ -86,11 +99,11 @@ namespace Voronoi
             return he;
         }
 
-        /*
-         * This delete routine can't reclaim node, since pointers from hash table
-         * may be present.
-         */
-
+        /// <summary>
+        /// Deletes HalfEdge. This delete routine cannot reclaim the node, since
+        /// hash table pointers may still be present.
+        /// </summary>
+        /// <param name="he">node to delete</param>
         internal void Delete(HalfEdge he)
         {
             he.ElLeft.ElRight = he.ElRight;
@@ -98,7 +111,12 @@ namespace Voronoi
             he.ElEdge = null;
         }
 
-        /* returns 1 if p is to right of HalfEdge e */
+        /// <summary>
+        /// Determines if the Point is to the right of the HalfEdge.
+        /// </summary>
+        /// <param name="el">edge</param>
+        /// <param name="p">point</param>
+        /// <returns>1 if p is to the right of HalfEdge</returns>
         private static bool IsRightOf(HalfEdge el, Point2D p)
         {
             bool above;
