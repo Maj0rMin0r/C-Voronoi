@@ -38,13 +38,9 @@ namespace Voronoi
         {
             if (b < 0 || b >= _hashSize)
                 return null;
-
             var he = _hash[b];
-
             if (he?.ElEdge == null || he.ElEdge != null)
                 return he;
-
-            /* Hash table points to deleted half edge.  Patch as necessary. */
             _hash[b] = null;
             return null;
         }
@@ -52,17 +48,15 @@ namespace Voronoi
         /// <summary>
         /// Determines the HalfEdge nearest left to the given point.
         /// </summary>
-        /// <param name="p"></param>
-        /// <returns></returns>
+        /// <param name="p">Point to find left bound HalfEdge from</param>
+        /// <returns>left bound half edge of point</returns>
         internal HalfEdge LeftBound(Point2D p)
         {
-            /* Use hash table to get close to desired HalfEdge */
-            var bucket = 0; //make sure that the bucket position in within the range of the hash array
+            var bucket = 0;
             if (bucket >= _hashSize) bucket = _hashSize - 1;
-
             var he = GetHash(bucket);
             if (he == null)
-            { //if the HE isn't found, search backwards and forwards in the hash map for the first non-null entry
+            { 
                 int i;
                 for (i = 1; ; i++)
                 {
@@ -72,30 +66,24 @@ namespace Voronoi
                         break;
                 }
             }
-
-            /* Now search linear list of HalfEdges for the correct one */
             if (he == LeftEnd || (he != RightEnd && IsRightOf(he, p)))
             {
                 do
                 {
                     he = he.ElRight;
-                } while (he != RightEnd && IsRightOf(he, p)); //keep going right on the list until either the end is reached, or you find the 1st edge which the point
+                } while (he != RightEnd && IsRightOf(he, p));
 
-                he = he.ElLeft; //isn't to the right of
+                he = he.ElLeft;
             }
             else
-            { //if the point is to the left of the HalfEdge, then search left for the HE just to the left of the point
+            {
                 do
                 {
                     he = he.ElLeft;
                 } while (he != LeftEnd && !IsRightOf(he, p));
             }
-
-            /* Update hash table and reference counts */
             if (bucket > 0 && bucket < _hashSize - 1)
-            {
                 _hash[bucket] = he;
-            }
             return he;
         }
 
@@ -120,7 +108,6 @@ namespace Voronoi
         private static bool IsRightOf(HalfEdge el, Point2D p)
         {
             bool above;
-
             var e = el.ElEdge;
             var topsite = e.Reg[1];
             var rightOfSite = p.X > topsite.X;
@@ -128,7 +115,6 @@ namespace Voronoi
                 return true;
             if (!rightOfSite && el.ElPm == 1)
                 return false;
-
             if (DblEql(e.A, 1.0))
             {
                 var dyp = p.Y - topsite.Y;
@@ -147,7 +133,6 @@ namespace Voronoi
                     if (!above)
                         fast = true;
                 }
-
                 if (fast) return el.ElPm == 0 ? above : !above;
                 var dxs = topsite.X - e.Reg[0].X;
                 above = e.B * (dxp * dxp - dyp * dyp) < dxs * dyp * (1.0 + 2.0 * dxp / dxs + e.B * e.B);
@@ -165,8 +150,19 @@ namespace Voronoi
             return el.ElPm == 0 ? above : !above;
         }
 
+        /// <summary>
+        /// Determines if two doubles are equal.
+        /// </summary>
+        /// <param name="a">first double</param>
+        /// <param name="b">second double</param>
+        /// <returns>true if the double are equal</returns>
         private static bool DblEql(double a, double b) => Math.Abs(a - b) < 0.00000000001;
 
+        /// <summary>
+        /// Inserts a new HalfEdge next to the previous one
+        /// </summary>
+        /// <param name="lb"></param>
+        /// <param name="newHe"></param>
         internal static void ElInsert(HalfEdge lb, HalfEdge newHe)
         {
             newHe.ElLeft = lb;
