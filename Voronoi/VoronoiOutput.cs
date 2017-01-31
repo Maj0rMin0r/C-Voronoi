@@ -124,22 +124,11 @@ namespace Voronoi
             var imageComparer = new ImageComparer();
             var originalBitmap = ReadonlyBitmap.Get();
             var lines = OutputLines(originalBitmap.Width, originalBitmap.Height);
-            //             Non-Parallel
-//            var allDeltaEList = new List<double>();
-//            foreach (var site in Sites)
-//            {
-//                allDeltaEList.AddRange(imageComparer.CalculateRegionsDeltaEList(originalBitmap, OutputRegion(site, lines), new IntPoint2D(site)));
-//            }
-
-            // Parallel
-            var allDeltaEList = new ConcurrentBag<double>();
-            Parallel.ForEach(Sites, site =>
+            var allDeltaEList = new List<double>();
+            foreach (var site in Sites)
             {
-                //                foreach (var delta in imageComparer.CalculateRegionsDeltaEList(allDeltaEList, originalBitmap, OutputRegion(site, lines), new IntPoint2D(site))) allDeltaEList.Add(delta);
-                //                imageComparer.CalculateRegionsDeltaEList(allDeltaEList, originalBitmap, OutputRegion(site, lines), new IntPoint2D(site));
-                imageComparer.CalculateRegionsDeltaEList(allDeltaEList, OutputRegion(site, lines), new IntPoint2D(site));
-            });
-
+                allDeltaEList.AddRange(imageComparer.CalculateRegionsDeltaEList(originalBitmap, OutputRegion(site, lines), new IntPoint2D(site)));
+            }
             return allDeltaEList.Average();
         }
 
