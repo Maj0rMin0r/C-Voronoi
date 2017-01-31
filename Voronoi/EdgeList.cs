@@ -161,14 +161,14 @@ namespace Voronoi
         /// <summary>
         /// Inserts a new HalfEdge next to the previous one
         /// </summary>
-        /// <param name="lb"></param>
-        /// <param name="newHe"></param>
-        internal static void ElInsert(HalfEdge lb, HalfEdge newHe)
+        /// <param name="leftBoundHalfEdge"></param>
+        /// <param name="newHalfEdge"></param>
+        internal static void ElInsert(HalfEdge leftBoundHalfEdge, HalfEdge newHalfEdge)
         {
-            newHe.ElLeft = lb;
-            newHe.ElRight = lb.ElRight;
-            lb.ElRight.ElLeft = newHe;
-            lb.ElRight = newHe;
+            newHalfEdge.ElLeft = leftBoundHalfEdge;
+            newHalfEdge.ElRight = leftBoundHalfEdge.ElRight;
+            leftBoundHalfEdge.ElRight.ElLeft = newHalfEdge;
+            leftBoundHalfEdge.ElRight = newHalfEdge;
         }
     }
 }
