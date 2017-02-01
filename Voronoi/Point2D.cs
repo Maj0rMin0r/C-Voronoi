@@ -42,8 +42,8 @@ namespace Voronoi
 
         public IntPoint2D(Point2D p)
         {
-            X = (int) p.X;
-            Y = (int) p.Y;
+            X = (int) Math.Round(p.X,MidpointRounding.AwayFromZero);
+            Y = (int)Math.Round(p.Y, MidpointRounding.AwayFromZero);
         }
 
         public IntPoint2D(IntPoint2D p)

@@ -30,6 +30,12 @@ namespace Voronoi
         public int ImageHeight { get; private set; }
         public int NumSites { get; private set; }
 
+        public Fortunes()
+        {
+            _siteidx = 0;
+            _allEdges = null;
+        }
+
         /**
          * Creates object
          * Runs
@@ -38,10 +44,10 @@ namespace Voronoi
         public static VoronoiOutput Run(int width, int height, int siteCount)
         {
             var fortune = new Fortunes
-                          {
-                              ImageWidth = width,
-                              ImageHeight = height
-                          };
+            {
+                ImageWidth = width,
+                ImageHeight = height
+            };
 
             var values = GetSet(siteCount, width, height);
 
@@ -65,7 +71,7 @@ namespace Voronoi
                 ImageWidth = width,
                 ImageHeight = height
             };
-            
+
             //Run
             fortune.GenerateVoronoi(values);
 
@@ -129,12 +135,11 @@ namespace Voronoi
 
             _siteidx = 0;
 
-            _siteidx = 0;
             Voronoi();
 
             return true;
         }
-        
+
         private Point2D Leftreg(HalfEdge he)
         {
             if (he.ElEdge == null)
@@ -151,7 +156,7 @@ namespace Voronoi
             //if the elPm field is zero, return the site 0 that this edge bisects, otherwise return site number 1
             return he.ElPm == 0 ? he.ElEdge.Reg[1] : he.ElEdge.Reg[0];
         }
-        
+
         private static Edge Bisect(Point2D s1, Point2D s2)
         {
             var newedge = new Edge();
@@ -179,7 +184,7 @@ namespace Voronoi
                 newedge.A = dx / dy;
                 newedge.C /= dy; //set formula of line, with y fixed to 1
             }
-            
+
             return newedge;
         }
 
@@ -230,7 +235,7 @@ namespace Voronoi
 
             ClipLine(e);
         }
-        
+
         private void PushGraphEdge(double x1, double y1, double x2, double y2)
         {
             var newEdge = new GraphEdge(new Point2D(x1, y1), new Point2D(x2, y2), _allEdges);
@@ -248,10 +253,10 @@ namespace Voronoi
             //if the distance between the two points this line was created from is less than 
             //the square root of 2, then ignore it
             if (e.Reg[0].Distance(e.Reg[1]) < 1.41421356) return;
-            
+
             s1 = DblEql(e.A, 1.0) && e.B >= 0.0 ? e.EndPoints[1] : e.EndPoints[0];
             s2 = DblEql(e.A, 1.0) && e.B >= 0.0 ? e.EndPoints[0] : e.EndPoints[1];
-            
+
             if (DblEql(e.A, 1.0))
             {
                 y1 = s1 != null && s1.Y > 1 ? s1.Y : 1;
@@ -262,13 +267,13 @@ namespace Voronoi
                 x2 = e.C - e.B * y2;
 
                 if (((x1 > ImageWidth) && (x2 > ImageWidth)) || ((x1 < 1) && (x2 < 1))) return;
-                
-                x1 = x1>ImageWidth ? ImageWidth : x1;
+
+                x1 = x1 > ImageWidth ? ImageWidth : x1;
                 x1 = x1 < 1 ? 1 : x1;
-                y1 = x1 > ImageWidth || x1 < 1 ? (e.C - x1) / e.B  : y1;
+                y1 = x1 > ImageWidth || x1 < 1 ? (e.C - x1) / e.B : y1;
                 x2 = x2 > ImageWidth ? ImageWidth : x2;
                 x2 = x2 < 1 ? 1 : x2;
-                y2 = x2 > ImageWidth || x2 < 1 ? (e.C - x2)/e.B : y2;
+                y2 = x2 > ImageWidth || x2 < 1 ? (e.C - x2) / e.B : y2;
             }
             else
             {
@@ -280,10 +285,10 @@ namespace Voronoi
                 y2 = e.C - e.A * x2;
 
                 if (((y1 > ImageHeight) & (y2 > ImageHeight)) | ((y1 < 1) & (y2 < 1))) return;
-                
+
                 y1 = y1 > ImageHeight ? ImageHeight : y1;
                 y1 = y1 < 1 ? 1 : y1;
-                x1 = y1 > ImageHeight || y1 < 1 ? (e.C - y1)/e.A : x1;
+                x1 = y1 > ImageHeight || y1 < 1 ? (e.C - y1) / e.A : x1;
                 y2 = y2 > ImageHeight ? ImageHeight : y2;
                 y2 = y2 < 1 ? 1 : y2;
                 x2 = y2 > ImageHeight || y2 < 1 ? (e.C - y2) / e.A : x2;
@@ -386,7 +391,7 @@ namespace Voronoi
                 else break;
             }
 
-        for (leftBound = list.LeftEnd.ElRight; leftBound != list.RightEnd; leftBound = leftBound.ElRight)
+            for (leftBound = list.LeftEnd.ElRight; leftBound != list.RightEnd; leftBound = leftBound.ElRight)
                 ClipLine(leftBound.ElEdge);
         } //TODO make linq
 
@@ -397,14 +402,18 @@ namespace Voronoi
 
         private static Point2D[] GetSet(int size, int x, int y)
         {
-            var dict = new HashSet<Point2D>();
+            var unique = new HashSet<string>();
+            var values = new Point2D[size];
             var rand = new Random();
 
-            //Ensures uniqueness
-            while (dict.Count < size)
-                dict.Add(new Point2D(rand.Next(1, x), rand.Next(1, y)));
-            
-            return dict.ToArray();
+            while(unique.Count<size)
+            {
+                var point = new Point2D(rand.Next(5, x)/5*5 - 5, rand.Next(5, y)/5*5 - 5);
+                if (unique.Add(point.ToString()))//If string is uniqe, point is unique
+                    values[unique.Count - 1] = point;
+            }
+
+            return values;
         }
     }
 }
