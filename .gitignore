@@ -409,4 +409,6 @@ build/
 
 # End of https://www.gitignore.io/api/visualstudio,csharp
 
+# Custom for this project
 images/*
+!images/*_test.png
