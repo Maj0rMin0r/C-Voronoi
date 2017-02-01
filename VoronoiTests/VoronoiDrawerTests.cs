@@ -6,7 +6,7 @@ using Voronoi;
 namespace VoronoiTests
 {
     [TestClass]
-    public class VoronoiDrawerTest
+    public class VoronoiDrawerTests
     {
         [TestMethod]
         public void Drawer_HappyPath_IsHappy()
