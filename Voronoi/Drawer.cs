@@ -25,19 +25,15 @@ namespace Voronoi
         /// <param name="fileDirectory">file directory</param>
         public void SaveToNewImageFile(string fileName, string fileDirectory)
         {
-            if (!Directory.Exists(fileDirectory)) throw new Exception("File directory does not exist.");
+            if (!Directory.Exists(fileDirectory)) throw new IOException("File directory does not exist.");
             var fileExtension = Path.GetExtension(fileName);
             if(!ValidFileExtensions.Contains(fileExtension))
-                throw new Exception("File extension not support. Only jpg or png are supported.");
+                throw new IOException("File extension not support. Only jpg or png are supported.");
             var path = Path.Combine(fileDirectory + fileName);
             string dir = Path.GetDirectoryName(path);
             string file = Path.GetFileNameWithoutExtension(fileName);
             for (int i = 1; File.Exists(path); ++i)
-            {
-                if (!File.Exists(path))
-                    break;
                 path = Path.Combine(dir + @"\" + file + "(" + i + ")" + fileExtension);
-            }
             _bitmap.Save(path);
         }
 
@@ -51,6 +47,8 @@ namespace Voronoi
             {
                 var lines = voronoi.OutputLines(_bitmap.Width, _bitmap.Height);
                 var intPoint2DList = voronoi.OutputRegion(site, lines);
+                if(ReadonlyBitmap.Get() == null)
+                    throw new IOException();
                 var regionColor = ReadonlyBitmap.Get().GetPixel((int)site.X, (int)site.Y);
                 foreach (var point in intPoint2DList)
                 {

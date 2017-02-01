@@ -78,6 +78,9 @@ namespace Voronoi
             NumSites = values.Length;
             _sites = new Point2D[NumSites];
 
+            if (values.Length == 0)
+                return false;
+
             double xmin = values[0].X;
             double ymin = values[0].Y;
             double xmax = values[0].X;
@@ -387,9 +390,9 @@ namespace Voronoi
                 else break;
             }
 
-        for (leftBound = list.LeftEnd.ElRight; leftBound != list.RightEnd; leftBound = leftBound.ElRight)
-                ClipLine(leftBound.ElEdge);
-        } //TODO make linq
+            for (leftBound = list.LeftEnd.ElRight; leftBound != list.RightEnd; leftBound = leftBound.ElRight)
+                    ClipLine(leftBound.ElEdge);
+        }
 
         private static bool DblEql(double a, double b) => Math.Abs(a - b) < 0.00000000001;
 
