@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Voronoi
 {
-    public class VoronoiOutput
+    public class VoronoiOutput : IOutputPrinter
     {
         private GraphEdge IteratorEdges { get; set; }
         private GraphEdge AllEdges { get; }
@@ -18,52 +18,6 @@ namespace Voronoi
             AllEdges = results;
             IteratorEdges = null;
             Sites = sites;
-        }
-
-        public void OutputConsole()
-        {
-            //Setup outputs
-            var graph = GenerateGraph();
-
-            Console.Out.WriteLine("Valid paths:");
-            foreach (var key in graph.Keys)
-            {
-                LinkedList<Point2D> valueList;
-                graph.TryGetValue(key, out valueList);
-
-                if (valueList == null)
-                    throw new ArgumentNullException(nameof(valueList), "Values not found");
-
-                foreach (var value in valueList)
-                {
-                    Console.Out.WriteLine("Got line [" + key.X + ", " + key.Y + "] -> [" + value.X + ", " + value.Y + "], ");
-                }
-            }
-        }
-
-        public void OutputFile(int width, int height)
-        {
-            //Visual output 
-            var writer = new System.IO.StreamWriter(@"D:\MyDocs\Documents\output.html"); //TODO make it a relative path
-            writer.WriteLine("<!DOCTYPE html>\n<html>\n<head>\n<title>\nTitle</title>\n</head>\n<body>\n<canvas id=\"myCanvas\" width=\"" + width + "\" height=\"" + height + "\" style=\"border:1px solid #d3d3d3;\">\nWords"
-                    + "</canvas>\n\n<script>\nvar c = document.getElementById(\"myCanvas\");\nvar ctx = c.getContext(\"2d\");\n\n<!--Points-->");
-
-            foreach (var t in Sites)
-            {
-                writer.WriteLine("ctx.beginPath();\nctx.arc(" + t.X + "," + t.Y + ",1,0,2*Math.PI);\nctx.stroke();\n\n");
-            }
-
-            ResetIterator();
-            var line = GetNext();
-
-            while (line != null)
-            {
-                writer.WriteLine("ctx.moveTo(" + line[0] + "," + line[1] + ");\nctx.lineTo(" + line[2] + "," + line[3] + ");\nctx.stroke();");
-                line = GetNext();
-            }
-
-            writer.WriteLine("</script>\n</body>\n</html>");
-            writer.Close();
         }
 
         /**
@@ -157,64 +111,7 @@ namespace Voronoi
             return array;
         }
 
-        /**
-         * For sanity-checking region output. And it looks kinda neat
-         */
-        public void PrintRegions(int width, int height)
-        {
-            var origins = Sites;
-            var booArray = OutputLines(width, height);
-            var array = new string[width,height];
-
-            //Carry over lines //TODO maybe use LINQ?
-            for (int i = 0; i<width; i++)
-            {
-                for (int j = 0; j<height; j++)
-                {
-                    if (booArray[i, j])
-                        array[i, j] = "X";
-                }
-            }
-
-            //Add regions //TODO maybe use LINQ?
-            foreach (var site in origins)
-            {
-                var region = OutputRegion(site, booArray);
-                //TODO maybe use LINQ?
-                foreach (var point in region)
-                    array[point.X, point.Y] = "/";
-                array[(int)site.X, (int)site.Y] = "O";
-            }
-
-
-            //Print block //TODO maybe use LINQ?
-            Console.Out.WriteLine("Regions:");
-            for (int y = height-1; y >= 0; y--)
-            {
-                for (int x = 0; x < width; x++)
-                {
-                    Console.Out.Write(array[x,y]);
-                }
-                Console.Out.WriteLine();
-            }
-
-
-        }
         
-        /**
-         * To sanity-check the line-drawing code
-         */
-        public static void PrintArray(bool[,] array, int width, int height)
-        {
-            for (int y = 0; y < height; y++)
-            {
-                for (int x = 0; x < width; x++)
-                {
-                    Console.Out.Write(array[x, y] ? "X" : " ");
-                }
-                Console.Out.WriteLine();
-            }
-        }
 
         /**
          * Bresenhams line theorem tells us all the points along a line. Neat!
@@ -341,6 +238,109 @@ namespace Voronoi
             IteratorEdges = IteratorEdges.Next;
 
             return returned;
+        }
+
+        void IOutputPrinter.OutputConsole()
+        {
+            //Setup outputs
+            var graph = GenerateGraph();
+
+            Console.Out.WriteLine("Valid paths:");
+            foreach (var key in graph.Keys)
+            {
+                LinkedList<Point2D> valueList;
+                graph.TryGetValue(key, out valueList);
+
+                if (valueList == null)
+                    throw new ArgumentNullException(nameof(valueList), "Values not found");
+
+                foreach (var value in valueList)
+                {
+                    Console.Out.WriteLine("Got line [" + key.X + ", " + key.Y + "] -> [" + value.X + ", " + value.Y + "], ");
+                }
+            }
+        }
+
+        void IOutputPrinter.OutputFile(int width, int height)
+        {
+            //Visual output 
+            var writer = new System.IO.StreamWriter(@"D:\MyDocs\Documents\output.html"); //TODO make it a relative path
+            writer.WriteLine("<!DOCTYPE html>\n<html>\n<head>\n<title>\nTitle</title>\n</head>\n<body>\n<canvas id=\"myCanvas\" width=\"" + width + "\" height=\"" + height + "\" style=\"border:1px solid #d3d3d3;\">\nWords"
+                    + "</canvas>\n\n<script>\nvar c = document.getElementById(\"myCanvas\");\nvar ctx = c.getContext(\"2d\");\n\n<!--Points-->");
+
+            foreach (var t in Sites)
+            {
+                writer.WriteLine("ctx.beginPath();\nctx.arc(" + t.X + "," + t.Y + ",1,0,2*Math.PI);\nctx.stroke();\n\n");
+            }
+
+            ResetIterator();
+            var line = GetNext();
+
+            while (line != null)
+            {
+                writer.WriteLine("ctx.moveTo(" + line[0] + "," + line[1] + ");\nctx.lineTo(" + line[2] + "," + line[3] + ");\nctx.stroke();");
+                line = GetNext();
+            }
+
+            writer.WriteLine("</script>\n</body>\n</html>");
+            writer.Close();
+        }
+
+        /**
+         * For sanity-checking region output. And it looks kinda neat
+         */
+        void IOutputPrinter.PrintRegions(int width, int height)
+        {
+            var origins = Sites;
+            var booArray = OutputLines(width, height);
+            var array = new string[width, height];
+
+            //Carry over lines //TODO maybe use LINQ?
+            for (int i = 0; i < width; i++)
+            {
+                for (int j = 0; j < height; j++)
+                {
+                    if (booArray[i, j])
+                        array[i, j] = "X";
+                }
+            }
+
+            //Add regions //TODO maybe use LINQ?
+            foreach (var site in origins)
+            {
+                var region = OutputRegion(site, booArray);
+                //TODO maybe use LINQ?
+                foreach (var point in region)
+                    array[point.X, point.Y] = "/";
+                array[(int)site.X, (int)site.Y] = "O";
+            }
+
+
+            //Print block //TODO maybe use LINQ?
+            Console.Out.WriteLine("Regions:");
+            for (int y = height - 1; y >= 0; y--)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    Console.Out.Write(array[x, y]);
+                }
+                Console.Out.WriteLine();
+            }
+        }
+
+        /**
+         * To sanity-check the line-drawing code
+         */
+        void IOutputPrinter.PrintArray(bool[,] array, int width, int height)
+        {
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    Console.Out.Write(array[x, y] ? "X" : " ");
+                }
+                Console.Out.WriteLine();
+            }
         }
     }
 }
