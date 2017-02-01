@@ -24,10 +24,10 @@ namespace VoronoiTests
         [ExpectedException(typeof(IOException))]
         public void Drawer_NullReadonlyVoronoi_IOException()
         {
+            ReadonlyBitmap.Set(null);
             using (var writer = new Drawer(new Bitmap(10, 10)))
             {
-                writer.DrawVoronoi(Fortunes.Run(9, 9, new[] { new Point2D(0, 0), new Point2D(5, 5) }));
-                writer.SaveToNewImageFile("a.png", "");
+                writer.DrawVoronoi(Fortunes.Run(9, 9, new Point2D[] {}));
             }
         }
 
@@ -37,7 +37,6 @@ namespace VoronoiTests
         {
             using (var writer = new Drawer(new Bitmap(10, 10)))
             {
-                writer.DrawVoronoi(Fortunes.Run(10, 10, new Point2D[] { }));
                 writer.SaveToNewImageFile("a.png", "");
             }
         }
@@ -48,7 +47,6 @@ namespace VoronoiTests
         {
             using (var writer = new Drawer(new Bitmap(10, 10)))
             {
-                writer.DrawVoronoi(Fortunes.Run(10, 10, new Point2D[] { }));
                 writer.SaveToNewImageFile("a.g", Directory.GetCurrentDirectory());
             }
         }

@@ -25,7 +25,7 @@ namespace Voronoi
         /// <param name="source">Bitmap to set into memory</param>
         public static void Set(Bitmap source)
         {
-            var copy = new Bitmap(source);
+            var copy = source == null ? null : new Bitmap(source);
             lock (Locker)
             {
                 _snapshot?.Dispose();

@@ -43,12 +43,12 @@ namespace Voronoi
         /// <param name="voronoi">output to be drawn</param>
         public void DrawVoronoi(VoronoiOutput voronoi)
         {
+            if (ReadonlyBitmap.Get() == null)
+                throw new IOException();
             foreach (var site in voronoi.Sites)
             {
                 var lines = voronoi.OutputLines(_bitmap.Width, _bitmap.Height);
                 var intPoint2DList = voronoi.OutputRegion(site, lines);
-                if(ReadonlyBitmap.Get() == null)
-                    throw new IOException();
                 var regionColor = ReadonlyBitmap.Get().GetPixel((int)site.X, (int)site.Y);
                 foreach (var point in intPoint2DList)
                 {
