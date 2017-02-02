@@ -261,27 +261,28 @@ namespace Voronoi
             }
         }
 
-        void IOutputPrinter.OutputFile(int width, int height)
+        /// <summary>
+        /// Visual output of voronoi.
+        /// </summary>
+        /// <param name="width">canvas width</param>
+        /// <param name="height">canvas height</param>
+        /// <param name="pathToSaveTo">path to save file to</param>
+        void IOutputPrinter.OutputFile(int width, int height, string pathToSaveTo)
         {
-            //Visual output 
-            var writer = new System.IO.StreamWriter(@"D:\MyDocs\Documents\output.html"); //TODO make it a relative path
+            var writer = new System.IO.StreamWriter(@pathToSaveTo);
             writer.WriteLine("<!DOCTYPE html>\n<html>\n<head>\n<title>\nTitle</title>\n</head>\n<body>\n<canvas id=\"myCanvas\" width=\"" + width + "\" height=\"" + height + "\" style=\"border:1px solid #d3d3d3;\">\nWords"
                     + "</canvas>\n\n<script>\nvar c = document.getElementById(\"myCanvas\");\nvar ctx = c.getContext(\"2d\");\n\n<!--Points-->");
-
             foreach (var t in Sites)
             {
                 writer.WriteLine("ctx.beginPath();\nctx.arc(" + t.X + "," + t.Y + ",1,0,2*Math.PI);\nctx.stroke();\n\n");
             }
-
             ResetIterator();
             var line = GetNext();
-
             while (line != null)
             {
                 writer.WriteLine("ctx.moveTo(" + line[0] + "," + line[1] + ");\nctx.lineTo(" + line[2] + "," + line[3] + ");\nctx.stroke();");
                 line = GetNext();
             }
-
             writer.WriteLine("</script>\n</body>\n</html>");
             writer.Close();
         }
@@ -294,8 +295,6 @@ namespace Voronoi
             var origins = Sites;
             var booArray = OutputLines(width, height);
             var array = new string[width, height];
-
-            //Carry over lines //TODO maybe use LINQ?
             for (int i = 0; i < width; i++)
             {
                 for (int j = 0; j < height; j++)
@@ -304,19 +303,13 @@ namespace Voronoi
                         array[i, j] = "X";
                 }
             }
-
-            //Add regions //TODO maybe use LINQ?
             foreach (var site in origins)
             {
                 var region = OutputRegion(site, booArray);
-                //TODO maybe use LINQ?
                 foreach (var point in region)
                     array[point.X, point.Y] = "/";
                 array[(int)site.X, (int)site.Y] = "O";
             }
-
-
-            //Print block //TODO maybe use LINQ?
             Console.Out.WriteLine("Regions:");
             for (int y = height - 1; y >= 0; y--)
             {
