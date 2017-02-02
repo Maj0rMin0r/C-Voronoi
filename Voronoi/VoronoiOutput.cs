@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace Voronoi
 {
@@ -29,49 +26,7 @@ namespace Voronoi
             var intPointList = new List<IntPoint2D>();
             var intPointQueue = new Queue<IntPoint2D>();
             var originPoint = new IntPoint2D(origin);
-
-            //Sometimes rounding makes a line too close to the origin. If so, nudge it over
-            if (array[originPoint.X, originPoint.Y])
-            { 
-                if (!array[originPoint.X + 1, originPoint.Y])
-                {
-                    originPoint.X++;
-                }
-                else if (!array[originPoint.X - 1, originPoint.Y])
-                {
-                    originPoint.X--;
-                }
-                else if(!array[originPoint.X, originPoint.Y+1])
-                {
-                    originPoint.Y++;
-                }
-                else if (!array[originPoint.X, originPoint.Y - 1])
-                {
-                    originPoint.Y--;
-                }
-                else if (!array[originPoint.X + 1, originPoint.Y + 1])
-                {
-                    originPoint.X++;
-                    originPoint.Y++;
-                }
-                else if (!array[originPoint.X - 1, originPoint.Y - 1])
-                {
-                    originPoint.X--;
-                    originPoint.Y--;
-                }
-                else if(!array[originPoint.X-1, originPoint.Y+1])
-                {
-                    originPoint.X--;
-                    originPoint.Y++;
-                }
-                else if (!array[originPoint.X + 1, originPoint.Y - 1])
-                {
-                    originPoint.X++;
-                    originPoint.Y--;
-                }
-                //Else no points found. This should only happen if you cranked the origin count too high.
-            }
-
+            
             intPointQueue.Enqueue(originPoint);
 
             while (intPointQueue.Count > 0)
@@ -153,9 +108,7 @@ namespace Voronoi
 
             return array;
         }
-
         
-
         /**
          * Bresenhams line theorem tells us all the points along a line. Neat!
          * Slightly modifed from the below source
@@ -172,13 +125,9 @@ namespace Voronoi
             for (int x = x0; x <= x1; ++x)
             {
                 if (steep)
-                {
                     Draw(y, x, ref array);
-                }
                 else
-                {
                     Draw(x, y, ref array);
-                }
 
                 err = err - dY;
                 if (err >= 0) continue;
@@ -201,10 +150,9 @@ namespace Voronoi
 
         /**
          * Quick helper to round double to int
-         * Converts from 1,1 index to 0,0 if true or default
+         * Converts from 1,1 index to 0,0
          * Makes sure we don't round too low
          */
-
         private static int R(double input) => input >= 1 ? (int) Math.Round(input - 1, MidpointRounding.AwayFromZero) : 0;
 
         private void ResetIterator() => IteratorEdges = AllEdges;

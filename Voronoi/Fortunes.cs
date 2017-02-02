@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Voronoi
 {
@@ -330,7 +329,7 @@ namespace Voronoi
 
                 //if the lowest site has a smaller y value than the lowest vector intersection, process the site
                 //otherwise process the vector intersection		
-                if (newsite != null && (queue.IsEmpty() || newsite.Y < newintstar.Y || (DblEql(newsite.Y, newintstar.Y) && newsite.X < newintstar.X)))
+                if (newsite != null && (queue.IsEmpty() || newintstar == null ||newsite.Y < newintstar.Y || (DblEql(newsite.Y, newintstar.Y) && newsite.X < newintstar.X)))
                 { /* new site is smallest - this is a site event*/
                     leftBound = list.LeftBound(newsite); //get the first HalfEdge to the LEFT of the new site
                     rbnd = leftBound.ElRight; //get the first HalfEdge to the RIGHT of the new site
@@ -408,6 +407,15 @@ namespace Voronoi
         /// <returns>single in-storage site</returns>
         private Point2D NextSite() => _siteidx >= NumSites ? null : _sites[_siteidx++];
 
+        /// <summary>
+        /// Returns a set of random-ish points
+        /// Points are all multiples of 5,
+        /// this ensures points never touch/intersect lines
+        /// </summary>
+        /// <param name="size"></param>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns> Array of unique Point2D's</returns>
         private static Point2D[] GetSet(int size, int x, int y)
         {
             var unique = new HashSet<string>();
@@ -417,7 +425,7 @@ namespace Voronoi
             while(unique.Count<size)
             {
                 var point = new Point2D(rand.Next(5, x)/5*5, rand.Next(5, y)/5*5);
-                if (unique.Add(point.ToString()))//If string is unique, point is unique
+                if (unique.Add(point.ToString()))//If string is unique, point must be unique
                     values[unique.Count - 1] = point;
             }
 

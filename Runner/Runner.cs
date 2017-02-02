@@ -10,7 +10,7 @@ namespace Runner
     public class Runner
     {
         private const string MissingArgs = "Error Args: {Number Of Points To Plot} {Image To Voronoi} {File Name} {File Directory}";
-        private const int C = 50;
+        private static int _c = 50;
 
         public static int Main(string [] args)
         {
@@ -28,19 +28,20 @@ namespace Runner
             return 0;
         }
 
-        public static void Start(int numberOfPointsToPlot, Bitmap sourceBitmap, string newImageName, string newImageFileDirectory)
+        public static void Start(int iterations, Bitmap sourceBitmap, string newImageName, string newImageFileDirectory)
         {
-            if (numberOfPointsToPlot < 1) throw new Exception(nameof(numberOfPointsToPlot) + " to be greater than 0.");
+            if (iterations < 1) throw new Exception(nameof(iterations) + " to be greater than 0.");
+            _c = iterations;
             if (sourceBitmap == null) throw new ArgumentNullException(nameof(sourceBitmap));
             if (newImageName == null) throw new ArgumentNullException(nameof(newImageName));
             if (newImageFileDirectory == null) throw new ArgumentNullException(nameof(newImageFileDirectory));
-            Run(numberOfPointsToPlot, sourceBitmap, newImageName, newImageFileDirectory);
+            Run((sourceBitmap.Width + sourceBitmap.Height) / 2, sourceBitmap, newImageName, newImageFileDirectory);
         }
 
         private static void Run(int numberOfPointsToPlot, Bitmap newImage, string fileName, string fileDirectory)
 	    {
             ReadonlyBitmap.Set(newImage);
-            var nums = Enumerable.Range(0, C).ToArray();
+            var nums = Enumerable.Range(0, _c).ToArray();
             var result = new ConcurrentDictionary<VoronoiOutput, double>();
 	        Parallel.ForEach(nums, _ =>
 	            {
