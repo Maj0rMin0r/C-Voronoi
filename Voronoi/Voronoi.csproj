@@ -56,6 +56,7 @@
     <Compile Include="GraphEdge.cs" />
     <Compile Include="HalfEdge.cs" />
     <Compile Include="ImageComparer.cs" />
+    <Compile Include="IOutputPrinter.cs" />
     <Compile Include="Point2D.cs" />
     <Compile Include="PriorityQueue.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
