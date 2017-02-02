@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System.Linq;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Voronoi;
 
 namespace VoronoiTests
@@ -102,6 +103,17 @@ namespace VoronoiTests
 
             Assert.AreEqual(2, origins.Length);
             Assert.AreEqual(81, region.Count);
+        }
+
+        [TestMethod]
+        public void LotsaPoints_Random_VerifyRegions()
+        {
+            var output = Fortunes.Run(1000, 1000, 1000);
+            var lines = output.OutputLines(1000, 1000);
+            var origins = output.Sites;
+            var count = origins.Count(site => output.OutputRegion(site, lines).Count == 0);
+
+            Assert.IsTrue(count < 5);
         }
     }
 }

@@ -26,7 +26,7 @@ namespace Voronoi
             var intPointList = new List<IntPoint2D>();
             var intPointQueue = new Queue<IntPoint2D>();
             var originPoint = new IntPoint2D(origin);
-            
+
             intPointQueue.Enqueue(originPoint);
 
             while (intPointQueue.Count > 0)
@@ -35,19 +35,19 @@ namespace Voronoi
 
                 //To deal with odd shapes, we might add something to the queue then process the row already
                 //If we do this row, we already have the row above/below in the queue. So we can skip this whole thing
-                if (array[point.X,point.Y] && (point != originPoint)) continue;
+                if (array[point.X, point.Y] && (point != originPoint)) continue;
 
                 // Set w and e equal to p
                 //East and west should represent bounds of valid, inclusive
                 var eastPoint = new IntPoint2D(point);
                 var westPoint = new IntPoint2D(point);
-                
+
                 // Move w to the west until the color of the node to the west of width no longer matches (or OOB)
-                while (!(westPoint.X <= 0 || array[westPoint.X-1, westPoint.Y]))
+                while (!(westPoint.X <= 0 || array[westPoint.X - 1, westPoint.Y]))
                     westPoint.X = westPoint.X - 1;
 
                 // Move e to the east until the color of the node to the east of e no longer matches (or OOB)
-                while (!(eastPoint.X >= array.GetUpperBound(0) || array[eastPoint.X+1, eastPoint.Y]))
+                while (!(eastPoint.X >= array.GetUpperBound(0) || array[eastPoint.X + 1, eastPoint.Y]))
                     eastPoint.X = eastPoint.X + 1;
 
                 // For each node n between w and e:
@@ -55,13 +55,13 @@ namespace Voronoi
                 for (int x = westPoint.X; x <= eastPoint.X; x++)
                 {
                     array[x, point.Y] = true;//Set node
-                    intPointList.Add(new IntPoint2D(x,point.Y));
+                    intPointList.Add(new IntPoint2D(x, point.Y));
 
                     // If the node above/below is empty, add that node to pq
                     if (!(point.Y == array.GetUpperBound(1) || array[x, point.Y + 1]))
                         intPointQueue.Enqueue(new IntPoint2D(x, point.Y + 1));
 
-                    if (!( point.Y == 0 || array[x, point.Y - 1]))
+                    if (!(point.Y == 0 || array[x, point.Y - 1]))
                         intPointQueue.Enqueue(new IntPoint2D(x, point.Y - 1));
                 }
             }
@@ -108,7 +108,7 @@ namespace Voronoi
 
             return array;
         }
-        
+
         /**
          * Bresenhams line theorem tells us all the points along a line. Neat!
          * Slightly modifed from the below source
@@ -153,7 +153,7 @@ namespace Voronoi
          * Converts from 1,1 index to 0,0
          * Makes sure we don't round too low
          */
-        private static int R(double input) => input >= 1 ? (int) Math.Round(input - 1, MidpointRounding.AwayFromZero) : 0;
+        private static int R(double input) => input >= 1 ? (int)Math.Round(input - 1, MidpointRounding.AwayFromZero) : 0;
 
         private void ResetIterator() => IteratorEdges = AllEdges;
 

@@ -261,7 +261,7 @@ namespace Voronoi
 
             var s1 = DblEql(e.A, 1.0) && e.B >= 0.0 ? e.EndPoints[1] : e.EndPoints[0];
             var s2 = DblEql(e.A, 1.0) && e.B >= 0.0 ? e.EndPoints[0] : e.EndPoints[1];
-            
+
             if (DblEql(e.A, 1.0))
             {
                 y1 = s1 != null && s1.Y > 1 ? s1.Y : 1;
@@ -302,9 +302,9 @@ namespace Voronoi
             PushGraphEdge(x1, y1, x2, y2);
         }
 
-         /// <summary>
-         /// Starts fortune's algorithm.
-         /// </summary>
+        /// <summary>
+        /// Starts fortune's algorithm.
+        /// </summary>
         private void Voronoi()
         {
             Point2D newintstar = null;
@@ -329,7 +329,7 @@ namespace Voronoi
 
                 //if the lowest site has a smaller y value than the lowest vector intersection, process the site
                 //otherwise process the vector intersection		
-                if (newsite != null && (queue.IsEmpty() || newintstar == null ||newsite.Y < newintstar.Y || (DblEql(newsite.Y, newintstar.Y) && newsite.X < newintstar.X)))
+                if (newsite != null && (queue.IsEmpty() || newintstar == null || newsite.Y < newintstar.Y || (DblEql(newsite.Y, newintstar.Y) && newsite.X < newintstar.X)))
                 { /* new site is smallest - this is a site event*/
                     leftBound = list.LeftBound(newsite); //get the first HalfEdge to the LEFT of the new site
                     rbnd = leftBound.ElRight; //get the first HalfEdge to the RIGHT of the new site
@@ -396,7 +396,7 @@ namespace Voronoi
 
             for (leftBound = list.LeftEnd.ElRight; leftBound != list.RightEnd; leftBound = leftBound.ElRight)
 
-                    ClipLine(leftBound.ElEdge);
+                ClipLine(leftBound.ElEdge);
         }
 
         private static bool DblEql(double a, double b) => Math.Abs(a - b) < 0.00000000001;
@@ -422,9 +422,9 @@ namespace Voronoi
             var values = new Point2D[size];
             var rand = new Random();
 
-            while(unique.Count<size)
+            while (unique.Count < size)
             {
-                var point = new Point2D(rand.Next(5, x)/5*5, rand.Next(5, y)/5*5);
+                var point = new Point2D(rand.Next(5, x) / 5 * 5, rand.Next(5, y) / 5 * 5);
                 if (unique.Add(point.ToString()))//If string is unique, point must be unique
                     values[unique.Count - 1] = point;
             }
