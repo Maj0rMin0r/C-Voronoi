@@ -411,4 +411,4 @@ build/
 
 # Custom for this project
 images/*
-!images/*_test.png
+!images/TestImages/*
