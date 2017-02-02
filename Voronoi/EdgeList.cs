@@ -18,13 +18,10 @@ namespace Voronoi
             _hashSize = 2 * (int)Math.Sqrt(sites + 4);
             _hash = new HalfEdge[_hashSize];
 
-            for (int i = 0; i < _hashSize; i++) _hash[i] = null;
             LeftEnd = new HalfEdge(null, 0);
             RightEnd = new HalfEdge(null, 0);
-            LeftEnd.ElLeft = null;
             LeftEnd.ElRight = RightEnd;
             RightEnd.ElLeft = LeftEnd;
-            RightEnd.ElRight = null;
             _hash[0] = LeftEnd;
             _hash[_hashSize - 1] = RightEnd;
         }
@@ -52,17 +49,15 @@ namespace Voronoi
         /// <returns>left bound half edge of point</returns>
         internal HalfEdge LeftBound(Point2D p)
         {
-            var bucket = 0;
-            if (bucket >= _hashSize) bucket = _hashSize - 1;
-            var he = GetHash(bucket);
+            var he = GetHash(0);
             if (he == null)
             { 
                 int i;
                 for (i = 1; ; i++)
                 {
-                    if ((he = GetHash(bucket - i)) != null)
+                    if ((he = GetHash(0 - i)) != null)
                         break;
-                    if ((he = GetHash(bucket + i)) != null)
+                    if ((he = GetHash(0 + i)) != null)
                         break;
                 }
             }
@@ -82,8 +77,6 @@ namespace Voronoi
                     he = he.ElLeft;
                 } while (he != LeftEnd && !IsRightOf(he, p));
             }
-            if (bucket > 0 && bucket < _hashSize - 1)
-                _hash[bucket] = he;
             return he;
         }
 

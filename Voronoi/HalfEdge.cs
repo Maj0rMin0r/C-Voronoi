@@ -19,8 +19,6 @@
         {
             ElEdge = e;
             ElPm = pm;
-            PqNext = null;
-            Vertex = null;
         }
     }
 }

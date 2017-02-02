@@ -37,32 +37,41 @@ namespace Voronoi
                 //If we do this row, we already have the row above/below in the queue. So we can skip this whole thing
                 if (array[point.X, point.Y] && (point != originPoint)) continue;
 
-                // Set w and e equal to p
+                // Set west and east equal to p
                 //East and west should represent bounds of valid, inclusive
-                var eastPoint = new IntPoint2D(point);
-                var westPoint = new IntPoint2D(point);
+                var eastX = point.X;
+                var eastY = point.Y;
+                var westX = point.X;
+                var westY = point.Y;
 
                 // Move w to the west until the color of the node to the west of width no longer matches (or OOB)
-                while (!(westPoint.X <= 0 || array[westPoint.X - 1, westPoint.Y]))
-                    westPoint.X = westPoint.X - 1;
+                while (!(westX <= 0 || array[westX - 1, westY]))
+                    westX = westX - 1;
 
                 // Move e to the east until the color of the node to the east of e no longer matches (or OOB)
-                while (!(eastPoint.X >= array.GetUpperBound(0) || array[eastPoint.X + 1, eastPoint.Y]))
-                    eastPoint.X = eastPoint.X + 1;
+                while (!(eastX >= array.GetUpperBound(0) || array[eastX + 1, eastY]))
+                    eastX = eastX + 1;
 
+                //Use these flags so we don't enqueue a point above/below if we already did
+                var above = false;
+                var below = false;
+                
                 // For each node n between w and e:
-                // TODO might be able to use LINQ for this for loop
-                for (int x = westPoint.X; x <= eastPoint.X; x++)
+                for (int x = westX; x <= eastX; x++)
                 {
                     array[x, point.Y] = true;//Set node
                     intPointList.Add(new IntPoint2D(x, point.Y));
 
                     // If the node above/below is empty, add that node to pq
-                    if (!(point.Y == array.GetUpperBound(1) || array[x, point.Y + 1]))
+                    if (!above && !(point.Y == array.GetUpperBound(1) || array[x, point.Y + 1]))
+                    {
                         intPointQueue.Enqueue(new IntPoint2D(x, point.Y + 1));
+                        above = true;
+                    }
 
-                    if (!(point.Y == 0 || array[x, point.Y - 1]))
-                        intPointQueue.Enqueue(new IntPoint2D(x, point.Y - 1));
+                    if (below || point.Y == 0 || array[x, point.Y - 1]) continue;
+                    intPointQueue.Enqueue(new IntPoint2D(x, point.Y - 1));
+                    below = true;
                 }
             }
             return intPointList;
@@ -78,9 +87,7 @@ namespace Voronoi
             var lines = OutputLines(originalBitmap.Width, originalBitmap.Height);
             var allDeltaEList = new List<double>();
             foreach (var site in Sites)
-            {
                 allDeltaEList.AddRange(imageComparer.CalculateRegionsDeltaEList(originalBitmap, OutputRegion(site, lines), new IntPoint2D(site)));
-            }
             return allDeltaEList.Average();
         }
 
@@ -101,9 +108,7 @@ namespace Voronoi
                     throw new ArgumentNullException(nameof(valueList), "Values not found");
 
                 foreach (var value in valueList)
-                {
                     DrawLine(R(key.X), R(key.Y), R(value.X), R(value.Y), ref array);
-                }
             }
 
             return array;
@@ -137,6 +142,7 @@ namespace Voronoi
 
         /**
          * Swapper helper for the line algorithm
+         * Part of Bresenhams code
          * @author Jason Morley (Source: http://www.morleydev.co.uk/blog/2010/11/18/generic-bresenhams-line-algorithm-in-visual-basic-net/)
          */
         private static void Swap<T>(ref T lhs, ref T rhs)
@@ -146,6 +152,12 @@ namespace Voronoi
             rhs = temp;
         }
 
+        /// <summary>
+        /// Draws a single point
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="array"></param>
         private static void Draw(int x, int y, ref bool[,] array) => array[x, y] = true;
 
         /**
@@ -169,31 +181,26 @@ namespace Voronoi
             while (line != null)
             {
                 LinkedList<Point2D> temp;
-
-                //	Write to a hash
-                //Make Point2D's
-                var key1 = new Point2D(line[0], line[1]); //Point 1
-                var key2 = new Point2D(line[2], line[3]); //Point 2
-
+                
                 //Put relation
-                if (graph.ContainsKey(key1))
+                if (graph.ContainsKey(line.P1))
                 {
                     //Get value, update, put back
-                    graph.TryGetValue(key1, out temp);
+                    graph.TryGetValue(line.P1, out temp);
 
                     if (temp == null)
                         throw new ArgumentNullException(nameof(temp), "Key was missing for some reason");
 
-                    temp.AddLast(key2);
-                    graph.Remove(key1);
-                    graph.Add(key1, temp);
+                    temp.AddLast(line.P2);
+                    graph.Remove(line.P1);
+                    graph.Add(line.P1, temp);
                 }
                 else
                 {
                     //Create value, put
                     temp = new LinkedList<Point2D>();
-                    temp.AddLast(key2);
-                    graph.Add(key1, temp);
+                    temp.AddLast(line.P2);
+                    graph.Add(line.P1, temp);
                 }
 
                 line = GetNext();
@@ -202,31 +209,15 @@ namespace Voronoi
             return graph;
         }
 
-        private static bool[,] BuildArray(int width, int height)
-        {
-            var array = new bool[width, height];
-            for (int i = 0; i < width; i++)
-            {
-                for (int j = 0; j < height; j++)
-                {
-                    array[i, j] = false;
-                }
-            }
-            return array;
-        }
+        private static bool[,] BuildArray(int width, int height) => new bool[width, height];
 
-        private double[] GetNext()
+        private GraphEdge GetNext()
         {
-            var returned = new double[4];
-
             if (IteratorEdges == null)
                 return null;
 
-            returned[0] = IteratorEdges.P1.X;
-            returned[1] = IteratorEdges.P1.Y;
-            returned[2] = IteratorEdges.P2.X;
-            returned[3] = IteratorEdges.P2.Y;
-
+            var returned = IteratorEdges;
+           
             IteratorEdges = IteratorEdges.Next;
 
             return returned;
@@ -247,9 +238,7 @@ namespace Voronoi
                     throw new ArgumentNullException(nameof(valueList), "Values not found");
 
                 foreach (var value in valueList)
-                {
                     Console.Out.WriteLine("Got line [" + key.X + ", " + key.Y + "] -> [" + value.X + ", " + value.Y + "], ");
-                }
             }
         }
 
@@ -272,7 +261,7 @@ namespace Voronoi
             var line = GetNext();
             while (line != null)
             {
-                writer.WriteLine("ctx.moveTo(" + line[0] + "," + line[1] + ");\nctx.lineTo(" + line[2] + "," + line[3] + ");\nctx.stroke();");
+                writer.WriteLine("ctx.moveTo(" + line.P1.X + "," + line.P1.Y + ");\nctx.lineTo(" + line.P2.X + "," + line.P2.Y + ");\nctx.stroke();");
                 line = GetNext();
             }
             writer.WriteLine("</script>\n</body>\n</html>");

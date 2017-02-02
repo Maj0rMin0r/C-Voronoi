@@ -15,7 +15,7 @@ namespace Voronoi
      * 	FreeNodeArrayList. Knows current and next node. Implemented
      * 	FreeList. Knows head and size. Replaced with ArrayList
      * 	Point. x,y. Using Java's 2D > In C#, had to make own. Basically a quicker copy of it
-     * 	Site. Stores a coord and 2 points. Implemented
+     * 	Site. Stores a coord and 2 points. Implemented, then replaced with Point
      * 	Edge. Stores 3 doubles, 2 arrays of size 2 of sites, and one int. Implemented
      * 	Graphedge. Stores 2 x/y coords and a next graphedge.
      */
@@ -28,12 +28,6 @@ namespace Voronoi
         public int ImageWidth { get; private set; }
         public int ImageHeight { get; private set; }
         public int NumSites { get; private set; }
-
-        public Fortunes()
-        {
-            _siteidx = 0;
-            _allEdges = null;
-        }
 
         /**
          * Creates object

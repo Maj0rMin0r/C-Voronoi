@@ -4,20 +4,17 @@ namespace Voronoi
 {
     public class PriorityQueue
     {
-        private readonly int _hashSize;
         private readonly HalfEdge[] _hash;
         private int _count;
         private int _min;
 
         public PriorityQueue(int sites)
         {
-            _hashSize = 4 * (int)Math.Sqrt(sites + 4);
-            _hash = new HalfEdge[_hashSize];
+            var hashSize = 4 * (int)Math.Sqrt(sites + 4);
+            _hash = new HalfEdge[hashSize];
 
-            for (int i = 0; i < _hashSize; i++)
-            {
+            for (int i = 0; i < hashSize; i++)
                 _hash[i] = new HalfEdge();
-            }
         }
 
         // push the HalfEdge into the ordered linked list of vertices
@@ -27,11 +24,10 @@ namespace Voronoi
 
             he.Vertex = v;
             he.YStar = v.Y + offset;
-            var last = _hash[GetBucket()];
+            var last = _hash[0];
+            _min = 0;
             while ((next = last.PqNext) != null && (he.YStar > next.YStar || (DblEql(he.YStar, next.YStar) && v.X > next.Vertex.X)))
-            {
                 last = next;
-            }
 
             he.PqNext = last.PqNext;
             last.PqNext = he;
@@ -43,7 +39,8 @@ namespace Voronoi
         internal HalfEdge Delete(HalfEdge he)
         {
             if (he.Vertex == null) return he;
-            var last = _hash[GetBucket()];
+            var last = _hash[0];
+            _min = 0;
             while (last.PqNext != he)
                 last = last.PqNext;
 
@@ -51,16 +48,6 @@ namespace Voronoi
             _count -= 1;
             he.Vertex = null;
             return he;
-        }
-
-        private int GetBucket()
-        {
-            var bucket = 0;
-            if (bucket >= _hashSize)
-                bucket = _hashSize - 1;
-            if (bucket < _min)
-                _min = bucket;
-            return bucket;
         }
 
         internal bool IsEmpty() => _count == 0;
