@@ -25,7 +25,7 @@ namespace VoronoiTests
         [TestMethod]
         public void CalculateRegionsDeltaEList_SameImage_ExpectZero()
         {
-            var originalBitmap = new Bitmap(@"./images/ImageComparerTestWhitePicture");
+            var originalBitmap = new Bitmap(@"./images/TestImages/WhitePicture_test.png");
             var squareRegionofPoints = GetIntPoint2DListOfRegion();
             var site = new IntPoint2D(25, 25);
             var imageComparer = new ImageComparer();
@@ -37,7 +37,7 @@ namespace VoronoiTests
         [TestMethod]
         public void CalculateRegionsDeltaEList_DifferentImages_ExpectNonZero()
         {
-            var originalBitmap = new Bitmap(@"./images/ImageComparerTestWhiteBlackPicture");
+            var originalBitmap = new Bitmap(@"../images/TestImages/WhiteBlackPicture_test.png");
             var squareRegionofPoints = GetIntPoint2DListOfRegion();
             var site = new IntPoint2D(25, 25);
             var imageComparer = new ImageComparer();
