@@ -416,8 +416,8 @@ namespace Voronoi
 
             while(unique.Count<size)
             {
-                var point = new Point2D(rand.Next(5, x)/5*5 - 5, rand.Next(5, y)/5*5 - 5);
-                if (unique.Add(point.ToString()))//If string is uniqe, point is unique
+                var point = new Point2D(rand.Next(5, x)/5*5, rand.Next(5, y)/5*5);
+                if (unique.Add(point.ToString()))//If string is unique, point is unique
                     values[unique.Count - 1] = point;
             }
 
