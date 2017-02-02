@@ -84,6 +84,9 @@ namespace Voronoi
             NumSites = values.Length;
             _sites = new Point2D[NumSites];
 
+            if (values.Length == 0)
+                return false;
+
             double xmin = values[0].X;
             double ymin = values[0].Y;
             double xmax = values[0].X;
@@ -188,8 +191,12 @@ namespace Voronoi
             return newedge;
         }
 
-        // create a new site where the HalfEdges el1 and el2 intersect - note that
-        // the Point in the argument list is not used, don't know why it's there
+        /// <summary>
+        /// Creates a new site where the HalfEdges intersect.
+        /// </summary>
+        /// <param name="el1">HalfEdge to intersect</param>
+        /// <param name="el2">HalfEdge to intersect</param>
+        /// <returns>new site/point at intersection</returns>
         private static Point2D Intersect(HalfEdge el1, HalfEdge el2)
         {
             Edge e;
@@ -244,7 +251,6 @@ namespace Voronoi
 
         private void ClipLine(Edge e)
         {
-            Point2D s1, s2;
             double x1;
             double x2;
             double y1;
@@ -254,9 +260,9 @@ namespace Voronoi
             //the square root of 2, then ignore it
             if (e.Reg[0].Distance(e.Reg[1]) < 1.41421356) return;
 
-            s1 = DblEql(e.A, 1.0) && e.B >= 0.0 ? e.EndPoints[1] : e.EndPoints[0];
-            s2 = DblEql(e.A, 1.0) && e.B >= 0.0 ? e.EndPoints[0] : e.EndPoints[1];
-
+            var s1 = DblEql(e.A, 1.0) && e.B >= 0.0 ? e.EndPoints[1] : e.EndPoints[0];
+            var s2 = DblEql(e.A, 1.0) && e.B >= 0.0 ? e.EndPoints[0] : e.EndPoints[1];
+            
             if (DblEql(e.A, 1.0))
             {
                 y1 = s1 != null && s1.Y > 1 ? s1.Y : 1;
@@ -297,11 +303,9 @@ namespace Voronoi
             PushGraphEdge(x1, y1, x2, y2);
         }
 
-        /*
-         * implicit parameters: nsites, sqrt_nsites, xmin, xmax, ymin, ymax, deltax,
-         * deltay (can all be estimates). Performance suffers if they are wrong;
-         * better to make nsites, deltax, and deltay too big than too small. (?)
-         */
+         /// <summary>
+         /// Starts fortune's algorithm.
+         /// </summary>
         private void Voronoi()
         {
             Point2D newintstar = null;
@@ -328,7 +332,7 @@ namespace Voronoi
                 //otherwise process the vector intersection		
                 if (newsite != null && (queue.IsEmpty() || newsite.Y < newintstar.Y || (DblEql(newsite.Y, newintstar.Y) && newsite.X < newintstar.X)))
                 { /* new site is smallest - this is a site event*/
-                    leftBound = list.LeftBound(newsite, ImageWidth); //get the first HalfEdge to the LEFT of the new site
+                    leftBound = list.LeftBound(newsite); //get the first HalfEdge to the LEFT of the new site
                     rbnd = leftBound.ElRight; //get the first HalfEdge to the RIGHT of the new site
                     bot = Rightreg(leftBound); //if this HalfEdge has no edge, , bot = bottom site (whatever that is)
                     e = Bisect(bot, newsite); //create a new edge that bisects 
@@ -392,12 +396,16 @@ namespace Voronoi
             }
 
             for (leftBound = list.LeftEnd.ElRight; leftBound != list.RightEnd; leftBound = leftBound.ElRight)
-                ClipLine(leftBound.ElEdge);
-        } //TODO make linq
+
+                    ClipLine(leftBound.ElEdge);
+        }
 
         private static bool DblEql(double a, double b) => Math.Abs(a - b) < 0.00000000001;
 
-        /* Return a single in-storage site */
+        /// <summary>
+        /// Gets the next site from sites already in storage.
+        /// </summary>
+        /// <returns>single in-storage site</returns>
         private Point2D NextSite() => _siteidx >= NumSites ? null : _sites[_siteidx++];
 
         private static Point2D[] GetSet(int size, int x, int y)

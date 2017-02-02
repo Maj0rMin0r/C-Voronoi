@@ -36,6 +36,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Drawing" />
   </ItemGroup>
   <Choose>
     <When Condition="('$(VisualStudioVersion)' == '10.0' or '$(VisualStudioVersion)' == '') and '$(TargetFrameworkVersion)' == 'v3.5'">
@@ -45,17 +46,24 @@
     </When>
     <Otherwise>
       <ItemGroup>
-        <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework" />
+        <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework">
+          <Private>False</Private>
+        </Reference>
       </ItemGroup>
     </Otherwise>
   </Choose>
   <ItemGroup>
     <Compile Include="ImageComparerTests.cs" />
+    <Compile Include="VoronoiRunnerTests.cs" />
     <Compile Include="VoronoiTests.cs" />
-    <Compile Include="VoronoiWriterTest.cs" />
+    <Compile Include="VoronoiDrawerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Runner\Runner.csproj">
+      <Project>{10ae53b2-2d11-4895-8176-b68c4d0a26d8}</Project>
+      <Name>Runner</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Voronoi\Voronoi.csproj">
       <Project>{4545723C-3E6D-48E0-A35A-7D612E50D6B1}</Project>
       <Name>Voronoi</Name>

@@ -7,25 +7,18 @@ using Voronoi;
 
 namespace Runner
 {
-    internal class Runner
+    public class Runner
     {
         private const string MissingArgs = "Error Args: {Number Of Points To Plot} {Image To Voronoi} {File Name} {File Directory}";
         private const int C = 50;
 
-        private static int Main(string[] args)
+        public static int Main(string [] args)
         {
             if (args.Length < 4)
-            {
-                Console.WriteLine(MissingArgs);
-                return 1;
-            }
+                throw new ArgumentException(MissingArgs);
             try
             {
-                var numberOfPointsToPlot = int.Parse(args[0]);
-                var originalBitmap = new Bitmap(args[1]);
-                ReadonlyBitmap.Set(originalBitmap, originalBitmap.Width, originalBitmap.Height);
-                var newBitmap = new Bitmap(originalBitmap.Width, originalBitmap.Height, originalBitmap.PixelFormat);
-                Run(newBitmap, numberOfPointsToPlot, args[2], args[3]);
+                Start(int.Parse(args[0]), new Bitmap(args[1]), args[2], args[3]);
             }
             catch (Exception e)
             {
@@ -35,14 +28,24 @@ namespace Runner
             return 0;
         }
 
-        private static void Run(Bitmap newImage, int numberOfPointsToPlot, string fileName, string fileDirectory)
+        public static void Start(int numberOfPointsToPlot, Bitmap sourceBitmap, string newImageName, string newImageFileDirectory)
+        {
+            if (numberOfPointsToPlot < 1) throw new Exception(nameof(numberOfPointsToPlot) + " to be greater than 0.");
+            if (sourceBitmap == null) throw new ArgumentNullException(nameof(sourceBitmap));
+            if (newImageName == null) throw new ArgumentNullException(nameof(newImageName));
+            if (newImageFileDirectory == null) throw new ArgumentNullException(nameof(newImageFileDirectory));
+            Run(numberOfPointsToPlot, sourceBitmap, newImageName, newImageFileDirectory);
+        }
+
+        private static void Run(int numberOfPointsToPlot, Bitmap newImage, string fileName, string fileDirectory)
 	    {
+            ReadonlyBitmap.Set(newImage);
             var nums = Enumerable.Range(0, C).ToArray();
             var result = new ConcurrentDictionary<VoronoiOutput, double>();
 	        Parallel.ForEach(nums, _ =>
 	            {
                     var voronoiOutput = Fortunes.Run(ReadonlyBitmap.Get().Width, ReadonlyBitmap.Get().Height, numberOfPointsToPlot);
-                    var averageDeltaE = voronoiOutput.CalculateAccuracy(ReadonlyBitmap.Get());
+                    var averageDeltaE = voronoiOutput.CalculateAccuracy();
                     result.TryAdd(voronoiOutput, averageDeltaE);
 	            });
             var bestVoronoi = result.Aggregate((l, r) => l.Value < r.Value ? l : r).Key;
@@ -52,5 +55,5 @@ namespace Runner
                 writer.SaveToNewImageFile(fileName, @fileDirectory);
             }
         }
-	}
+    }
 }
