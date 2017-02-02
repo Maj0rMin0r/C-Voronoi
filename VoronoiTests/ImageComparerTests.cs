@@ -9,6 +9,8 @@ namespace VoronoiTests
     [TestClass]
     public class ImageComparerTests
     {
+        private const string TestImageDirectory = @"..\..\..\images\TestImages\";
+
         private static List<IntPoint2D> GetIntPoint2DListOfRegion()
         {
             var regionOfPoints = new List<IntPoint2D>();
@@ -25,7 +27,7 @@ namespace VoronoiTests
         [TestMethod]
         public void CalculateRegionsDeltaEList_SameImage_ExpectZero()
         {
-            var originalBitmap = new Bitmap(@"./images/TestImages/WhitePicture_test.png");
+            var originalBitmap = new Bitmap(TestImageDirectory + "WhitePicture_test.png");
             var squareRegionofPoints = GetIntPoint2DListOfRegion();
             var site = new IntPoint2D(25, 25);
             var imageComparer = new ImageComparer();
@@ -37,7 +39,7 @@ namespace VoronoiTests
         [TestMethod]
         public void CalculateRegionsDeltaEList_DifferentImages_ExpectNonZero()
         {
-            var originalBitmap = new Bitmap(@"../images/TestImages/WhiteBlackPicture_test.png");
+            var originalBitmap = new Bitmap(TestImageDirectory + "WhiteBlackPicture_test.png");
             var squareRegionofPoints = GetIntPoint2DListOfRegion();
             var site = new IntPoint2D(25, 25);
             var imageComparer = new ImageComparer();
