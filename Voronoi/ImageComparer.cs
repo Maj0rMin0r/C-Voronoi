@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 
@@ -11,6 +12,10 @@ namespace Voronoi
     {
         public List<double> CalculateRegionsDeltaEList(Bitmap originalBitmap, List<IntPoint2D> listOfPoints, IntPoint2D originPoint)
         {
+            if (originalBitmap == null) throw new ArgumentNullException(nameof(originalBitmap));
+            if (!listOfPoints.Any()) throw new ArgumentNullException(nameof(listOfPoints));
+            if (originPoint == null) throw new ArgumentNullException(nameof(originPoint));
+
             var originPixelColor = originalBitmap.GetPixel(originPoint.X, originPoint.Y);
             var originPixelRgb = new Rgb { R = originPixelColor.R, B = originPixelColor.B, G = originPixelColor.G };
             return listOfPoints.Select(point => originalBitmap.GetPixel(point.X, point.Y))
