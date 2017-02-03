@@ -38,7 +38,7 @@ namespace Voronoi
                 if (array[point.X, point.Y] && (point != originPoint)) continue;
 
                 // Set west and east equal to p
-                //East and west should represent bounds of valid, inclusive
+                //East and west should represent bounds of valid, inclusive. 4 vars are +10% faster than 2 point objects
                 var eastX = point.X;
                 var eastY = point.Y;
                 var westX = point.X;
