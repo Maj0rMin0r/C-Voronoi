@@ -2,13 +2,13 @@
 
 namespace Voronoi
 {
-    public class PriorityQueue
+    internal class PriorityQueue
     {
         private readonly HalfEdge[] _hash;
         private int _count;
         private int _min;
 
-        public PriorityQueue(int sites)
+        internal PriorityQueue(int sites)
         {
             var hashSize = 4 * (int)Math.Sqrt(sites + 4);
             _hash = new HalfEdge[hashSize];
