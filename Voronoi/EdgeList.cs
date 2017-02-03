@@ -4,10 +4,10 @@ namespace Voronoi
 {
     internal class EdgeList
     {
-        public HalfEdge LeftEnd { get; }
-        public HalfEdge RightEnd { get; }
-        private readonly int _hashSize;
-        private readonly HalfEdge[] _hash;
+        internal HalfEdge LeftEnd { get; }
+        internal HalfEdge RightEnd { get; }
+        internal readonly int _hashSize;
+        internal readonly HalfEdge[] _hash;
 
         /// <summary>
         /// Initializes the array of HalfEdge's based on the number of sites available.
