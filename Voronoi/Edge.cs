@@ -1,12 +1,12 @@
 ﻿namespace Voronoi
 {
-    public class Edge
+    internal class Edge
     {
-        public double A;
-        public double B;
-        public double C;
-        public readonly Point2D[] EndPoints;
-        public readonly Point2D[] Reg;
+        internal double A;
+        internal double B;
+        internal double C;
+        internal readonly Point2D[] EndPoints;
+        internal readonly Point2D[] Reg;
 
         internal Edge()
         {

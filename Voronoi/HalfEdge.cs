@@ -2,22 +2,22 @@
 
 namespace Voronoi
 {
-    public class HalfEdge
+    internal class HalfEdge
     {
-        public HalfEdge ElLeft;
-        public HalfEdge ElRight;
-        public Edge ElEdge;
-        public readonly int ElPm;
-        public Point2D Vertex;
-        public double YStar;
-        public HalfEdge PqNext;
+        internal HalfEdge ElLeft;
+        internal HalfEdge ElRight;
+        internal Edge ElEdge;
+        internal readonly int ElPm;
+        internal Point2D Vertex;
+        internal double YStar;
+        internal HalfEdge PqNext;
 
-        public HalfEdge()
+        internal HalfEdge()
         {
             //Generic constructor lets C# to use type defaults
         }
 
-        public HalfEdge(Edge edge, int pm)
+        internal HalfEdge(Edge edge, int pm)
         {
             if (pm < 0) throw new ArgumentNullException(nameof(pm));
             ElEdge = edge;

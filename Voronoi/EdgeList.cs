@@ -108,7 +108,7 @@ namespace Voronoi
                 return true;
             if (!rightOfSite && el.ElPm == 1)
                 return false;
-            if (DblEql(e.A, 1.0))
+            if (DoubleComparison.IsEqual(e.A, 1.0))
             {
                 var dyp = p.Y - topsite.Y;
                 var dxp = p.X - topsite.X;
@@ -142,14 +142,6 @@ namespace Voronoi
             }
             return el.ElPm == 0 ? above : !above;
         }
-
-        /// <summary>
-        /// Determines if two doubles are equal.
-        /// </summary>
-        /// <param name="a">first double</param>
-        /// <param name="b">second double</param>
-        /// <returns>true if the double are equal</returns>
-        private static bool DblEql(double a, double b) => Math.Abs(a - b) < 0.00000000001;
 
         /// <summary>
         /// Inserts a new HalfEdge next to the previous one
