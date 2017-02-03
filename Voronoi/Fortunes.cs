@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace Voronoi
@@ -47,15 +48,14 @@ namespace Voronoi
             //Run
             fortune.GenerateVoronoi(values);
 
-            var output = new VoronoiOutput(fortune._allEdges, values);
-            return output;
+            return new VoronoiOutput(fortune._allEdges, values);
         }
 
         /**
          * Creates object
          * Runs
          * Outputs
-         * Uses manual set (for testing, mainly
+         * Uses manual set (for testing, mainly)
          */
         public static VoronoiOutput Run(int width, int height, Point2D[] values)
         {
@@ -68,8 +68,7 @@ namespace Voronoi
             //Run
             fortune.GenerateVoronoi(values);
 
-            var output = new VoronoiOutput(fortune._allEdges, values);
-            return output;
+            return new VoronoiOutput(fortune._allEdges, values);
         }
 
         public bool GenerateVoronoi(Point2D[] values)
@@ -100,32 +99,25 @@ namespace Voronoi
                     ymax = values[i].Y;
             }
 
-            // This is where C++ does qsort and some magic stuff to sort these. We
-            // do it the hard way. This sort is best-case n and stable, and moreso takes barely any lines
-
             // Sort x
             for (int n = 1; n < _sites.Length; n++)
             {
-                int j = n - 1;
                 var tem = _sites[n];
-                while (j >= 0 && tem.X < _sites[j].X)
-                {
+                int j;
+                for (j = n - 1; j >= 0 && tem.X < _sites[j].X; j--)
                     _sites[j + 1] = _sites[j];
-                    j--;
-                }
+
                 _sites[j + 1] = tem;
             }
-
+            
             // Sort y
             for (int n = 1; n < _sites.Length; n++)
             {
-                int j = n - 1;
                 var tem = _sites[n];
-                while (j >= 0 && tem.Y < _sites[j].Y)
-                {
+                int j;
+                for (j = n - 1; j >= 0 && tem.Y < _sites[j].Y; j--)
                     _sites[j + 1] = _sites[j];
-                    j--;
-                }
+
                 _sites[j + 1] = tem;
             }
 
@@ -220,20 +212,13 @@ namespace Voronoi
                 e = e2;
             }
 
-            if ((xint >= e.Reg[1].X && el.ElPm == 0) || (xint < e.Reg[1].X && el.ElPm == 1))
-                return null;
-
-            //create a new site at the point of intersection - this is a new vector event waiting to happen
-            return new Point2D(xint, yint);
+            return xint >= e.Reg[1].X && el.ElPm == 0 || xint < e.Reg[1].X && el.ElPm == 1 ? null : new Point2D(xint, yint);
         }
 
         private void Endpoint(Edge e, int lr, Point2D s)
         {
             e.EndPoints[lr] = s;
-            if (e.EndPoints[1 - lr] == null)
-                return;
-
-            ClipLine(e);
+            if (e.EndPoints[1 - lr] != null) ClipLine(e);
         }
 
         private void PushGraphEdge(double x1, double y1, double x2, double y2)
@@ -307,7 +292,6 @@ namespace Voronoi
             var queue = new PriorityQueue(NumSites);
             _bottomsite = NextSite();
             var list = new EdgeList(NumSites);
-
             var newsite = NextSite();
 
             while (true)
@@ -369,19 +353,16 @@ namespace Voronoi
                         pm = 1;
                     }
 
-                    e = Bisect(bot, top); //create an Edge (or line) that is between the two Sites. This creates
-                    //the formula of the line, and assigns a line number to it
-                    bisector = new HalfEdge(e, pm); //create a HE from the Edge 'e', and make it point to that edge with its elEdge field
-                    EdgeList.ElInsert(llbnd, bisector); //insert the new bisector to the right of the left HE
-                    Endpoint(e, 1 - pm, leftBoundVertex); //set one endpoint to the new edge to be the vector point 'v'.
-                    //If the site to the left of this bisector is higher than the right
-                    //Site, then this endpoint is put in position 0; otherwise in pos 1
-
-                    //if left HE and the new bisector don't intersect, then delete the left HE, and reinsert it 
+                    e = Bisect(bot, top); //Create Edge between the two Sites
+                    bisector = new HalfEdge(e, pm); //Create a HE from the Edge 'e', and make it point to that edge with its elEdge field
+                    EdgeList.ElInsert(llbnd, bisector); //Insert the new bisector to the right of the left HE
+                    Endpoint(e, 1 - pm, leftBoundVertex); //Set one endpoint to the new edge to be the vector point 'v'
+                
+                    //If left HE and the new bisector don't intersect, then delete the left HE, and reinsert
                     if ((p = Intersect(llbnd, bisector)) != null)
                         queue.PQinsert(queue.Delete(llbnd), p, p.Distance(bot));
 
-                    //if right HE and the new bisector don't intersect, then reinsert it 
+                    //If right HE and the new bisector don't intersect, then reinsert it
                     if ((p = Intersect(bisector, rrbnd)) != null)
                         queue.PQinsert(bisector, p, p.Distance(bot));
                 }
@@ -389,7 +370,6 @@ namespace Voronoi
             }
 
             for (leftBound = list.LeftEnd.ElRight; leftBound != list.RightEnd; leftBound = leftBound.ElRight)
-
                 ClipLine(leftBound.ElEdge);
         }
 

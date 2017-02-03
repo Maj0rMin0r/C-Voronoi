@@ -9,9 +9,6 @@ namespace VoronoiTests
     public class VoronoiRunnerTests
     {
         [TestMethod]
-        public void Main_HappyPath_IsHappy() => Runner.Runner.Main(new[] { "50", @"C:\Users\Jim\MSOE\C-Voronoi\images\sample_image_01.png", "a.png", @"C:\Users\Jim\MSOE\C-Voronoi\images\" });
-
-        [TestMethod]
         public void Main_InvalidBitmapPath_Exception() => Runner.Runner.Main(new[] {"50", Directory.GetCurrentDirectory(), "a.png", Directory.GetCurrentDirectory() });
 
         [TestMethod]
