@@ -14,11 +14,11 @@ namespace VoronoiTests
         private static List<IntPoint2D> GetIntPoint2DListOfRegion()
         {
             var regionOfPoints = new List<IntPoint2D>();
-            for (var i = 1; i <= 50; ++i)
+            for (var i = 0; i < 50; ++i)
             {
-                for (var j = 1; j <= 50; ++j)
+                for (var j = 0; j < 50; ++j)
                 {
-                    regionOfPoints.Add(new IntPoint2D(i,j));
+                    regionOfPoints.Add(new IntPoint2D(j,i));
                 }
             }
             return regionOfPoints;
@@ -28,11 +28,12 @@ namespace VoronoiTests
         public void CalculateRegionsDeltaEList_SameImage_ExpectZero()
         {
             var originalBitmap = new Bitmap(TestImageDirectory + "WhitePicture_test.png");
+            ReadonlyBitmap.Set(originalBitmap);
             var squareRegionofPoints = GetIntPoint2DListOfRegion();
             var site = new IntPoint2D(25, 25);
             var imageComparer = new ImageComparer();
             
-            var allDeltaEList = imageComparer.CalculateRegionsDeltaEList(originalBitmap, squareRegionofPoints, site);
+            var allDeltaEList = imageComparer.CalculateRegionsDeltaEList(ReadonlyBitmap.Get(), squareRegionofPoints, site);
             Assert.AreEqual(0.0, allDeltaEList.Average());
         }
 
