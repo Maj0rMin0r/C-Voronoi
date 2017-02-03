@@ -20,8 +20,8 @@ namespace Voronoi
 
             LeftEnd = new HalfEdge(null, 0);
             RightEnd = new HalfEdge(null, 0);
-            LeftEnd.ElRight = RightEnd;
-            RightEnd.ElLeft = LeftEnd;
+            LeftEnd.Right = RightEnd;
+            RightEnd.Left = LeftEnd;
             _hash[0] = LeftEnd;
             _hash[_hashSize - 1] = RightEnd;
         }
@@ -36,7 +36,7 @@ namespace Voronoi
             if (b < 0 || b >= _hashSize)
                 return null;
             var he = _hash[b];
-            if (he?.ElEdge == null || he.ElEdge != null)
+            if (he?.Edge == null || he.Edge != null)
                 return he;
             _hash[b] = null;
             return null;
@@ -65,16 +65,16 @@ namespace Voronoi
             {
                 do
                 {
-                    he = he.ElRight;
+                    he = he.Right;
                 } while (he != RightEnd && IsRightOf(he, p));
 
-                he = he.ElLeft;
+                he = he.Left;
             }
             else
             {
                 do
                 {
-                    he = he.ElLeft;
+                    he = he.Left;
                 } while (he != LeftEnd && !IsRightOf(he, p));
             }
             return he;
@@ -87,9 +87,9 @@ namespace Voronoi
         /// <param name="he">node to delete</param>
         internal void Delete(HalfEdge he)
         {
-            he.ElLeft.ElRight = he.ElRight;
-            he.ElRight.ElLeft = he.ElLeft;
-            he.ElEdge = null;
+            he.Left.Right = he.Right;
+            he.Right.Left = he.Left;
+            he.Edge = null;
         }
 
         /// <summary>
@@ -101,12 +101,12 @@ namespace Voronoi
         private static bool IsRightOf(HalfEdge el, Point2D p)
         {
             bool above;
-            var e = el.ElEdge;
+            var e = el.Edge;
             var topsite = e.Reg[1];
             var rightOfSite = p.X > topsite.X;
-            if (rightOfSite && el.ElPm == 0)
+            if (rightOfSite && el.Midpoint == 0)
                 return true;
-            if (!rightOfSite && el.ElPm == 1)
+            if (!rightOfSite && el.Midpoint == 1)
                 return false;
             if (DoubleComparison.IsEqual(e.A, 1.0))
             {
@@ -126,7 +126,7 @@ namespace Voronoi
                     if (!above)
                         fast = true;
                 }
-                if (fast) return el.ElPm == 0 ? above : !above;
+                if (fast) return el.Midpoint == 0 ? above : !above;
                 var dxs = topsite.X - e.Reg[0].X;
                 above = e.B * (dxp * dxp - dyp * dyp) < dxs * dyp * (1.0 + 2.0 * dxp / dxs + e.B * e.B);
                 if (e.B < 0.0)
@@ -140,7 +140,7 @@ namespace Voronoi
                 var t3 = yl - topsite.Y;
                 above = t1 * t1 > t2 * t2 + t3 * t3;
             }
-            return el.ElPm == 0 ? above : !above;
+            return el.Midpoint == 0 ? above : !above;
         }
 
         /// <summary>
@@ -150,10 +150,10 @@ namespace Voronoi
         /// <param name="newHalfEdge"></param>
         internal static void ElInsert(HalfEdge leftBoundHalfEdge, HalfEdge newHalfEdge)
         {
-            newHalfEdge.ElLeft = leftBoundHalfEdge;
-            newHalfEdge.ElRight = leftBoundHalfEdge.ElRight;
-            leftBoundHalfEdge.ElRight.ElLeft = newHalfEdge;
-            leftBoundHalfEdge.ElRight = newHalfEdge;
+            newHalfEdge.Left = leftBoundHalfEdge;
+            newHalfEdge.Right = leftBoundHalfEdge.Right;
+            leftBoundHalfEdge.Right.Left = newHalfEdge;
+            leftBoundHalfEdge.Right = newHalfEdge;
         }
     }
 }

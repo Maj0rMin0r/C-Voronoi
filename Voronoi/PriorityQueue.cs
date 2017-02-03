@@ -26,11 +26,11 @@ namespace Voronoi
             he.YStar = v.Y + offset;
             var last = _hash[0];
             _min = 0;
-            while ((next = last.PqNext) != null && (he.YStar > next.YStar || (DoubleComparison.IsEqual(he.YStar, next.YStar) && v.X > next.Vertex.X)))
+            while ((next = last.NextSite) != null && (he.YStar > next.YStar || (DoubleComparison.IsEqual(he.YStar, next.YStar) && v.X > next.Vertex.X)))
                 last = next;
 
-            he.PqNext = last.PqNext;
-            last.PqNext = he;
+            he.NextSite = last.NextSite;
+            last.NextSite = he;
             _count++;
         }
 
@@ -41,10 +41,10 @@ namespace Voronoi
             if (he.Vertex == null) return he;
             var last = _hash[0];
             _min = 0;
-            while (last.PqNext != he)
-                last = last.PqNext;
+            while (last.NextSite != he)
+                last = last.NextSite;
 
-            last.PqNext = he.PqNext;
+            last.NextSite = he.NextSite;
             _count -= 1;
             he.Vertex = null;
             return he;
@@ -54,16 +54,16 @@ namespace Voronoi
 
         internal Point2D Min()
         {
-            while (_hash[_min].PqNext == null)
+            while (_hash[_min].NextSite == null)
                 _min += 1;
 
-            return new Point2D(_hash[_min].PqNext.Vertex.X, _hash[_min].PqNext.YStar);
+            return new Point2D(_hash[_min].NextSite.Vertex.X, _hash[_min].NextSite.YStar);
         }
 
         internal HalfEdge ExtractMin()
         {
-            var curr = _hash[_min].PqNext;
-            _hash[_min].PqNext = curr.PqNext;
+            var curr = _hash[_min].NextSite;
+            _hash[_min].NextSite = curr.NextSite;
             _count -= 1;
             return curr;
         }        

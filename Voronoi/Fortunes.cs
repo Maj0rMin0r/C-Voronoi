@@ -129,19 +129,19 @@ namespace Voronoi
 
         private Point2D Leftreg(HalfEdge he)
         {
-            if (he.ElEdge == null)
+            if (he.Edge == null)
                 return _bottomsite;
 
-            return he.ElPm == 0 ? he.ElEdge.Reg[0] : he.ElEdge.Reg[1];
+            return he.Midpoint == 0 ? he.Edge.Reg[0] : he.Edge.Reg[1];
         }
 
         private Point2D Rightreg(HalfEdge he)
         {
-            if (he.ElEdge == null) //if this HalfEdge has no edge, return the bottom site (whatever that is)
+            if (he.Edge == null) //if this HalfEdge has no edge, return the bottom site (whatever that is)
                 return _bottomsite;
 
             //if the elPm field is zero, return the site 0 that this edge bisects, otherwise return site number 1
-            return he.ElPm == 0 ? he.ElEdge.Reg[1] : he.ElEdge.Reg[0];
+            return he.Midpoint == 0 ? he.Edge.Reg[1] : he.Edge.Reg[0];
         }
 
         private static Edge Bisect(Point2D s1, Point2D s2)
@@ -186,8 +186,8 @@ namespace Voronoi
             Edge e;
             HalfEdge el;
 
-            var e1 = el1.ElEdge;
-            var e2 = el2.ElEdge;
+            var e1 = el1.Edge;
+            var e2 = el2.Edge;
             if (e1 == null || e2 == null || e1.Reg[1] == e2.Reg[1])
                 return null;
 
@@ -211,7 +211,7 @@ namespace Voronoi
                 e = e2;
             }
 
-            return xint >= e.Reg[1].X && el.ElPm == 0 || xint < e.Reg[1].X && el.ElPm == 1 ? null : new Point2D(xint, yint);
+            return xint >= e.Reg[1].X && el.Midpoint == 0 || xint < e.Reg[1].X && el.Midpoint == 1 ? null : new Point2D(xint, yint);
         }
 
         private void Endpoint(Edge e, int lr, Point2D s)
@@ -309,7 +309,7 @@ namespace Voronoi
                 if (newsite != null && (queue.IsEmpty() || newintstar == null || newsite.Y < newintstar.Y || (DoubleComparison.IsEqual(newsite.Y, newintstar.Y) && newsite.X < newintstar.X)))
                 { /* new site is smallest - this is a site event*/
                     leftBound = list.LeftBound(newsite); //get the first HalfEdge to the LEFT of the new site
-                    rbnd = leftBound.ElRight; //get the first HalfEdge to the RIGHT of the new site
+                    rbnd = leftBound.Right; //get the first HalfEdge to the RIGHT of the new site
                     bot = Rightreg(leftBound); //if this HalfEdge has no edge, , bot = bottom site (whatever that is)
                     e = Bisect(bot, newsite); //create a new edge that bisects 
                     bisector = new HalfEdge(e, 0); //create a new HalfEdge, setting its elPm field to 0			
@@ -330,15 +330,15 @@ namespace Voronoi
                 else if (!queue.IsEmpty())
                 { /* intersection is smallest - this is a vector event */
                     leftBound = queue.ExtractMin(); //pop the HalfEdge with the lowest vector off the ordered list of vectors				
-                    var llbnd = leftBound.ElLeft;
-                    rbnd = leftBound.ElRight; //get the HalfEdge to the right of the above HE
-                    var rrbnd = rbnd.ElRight;
+                    var llbnd = leftBound.Left;
+                    rbnd = leftBound.Right; //get the HalfEdge to the right of the above HE
+                    var rrbnd = rbnd.Right;
                     bot = Leftreg(leftBound); //get the Site to the left of the left HE which it bisects
                     var top = Rightreg(rbnd);
 
                     var leftBoundVertex = leftBound.Vertex;
-                    Endpoint(leftBound.ElEdge, leftBound.ElPm, leftBoundVertex); //set the endpoint of the left HalfEdge to be this vector
-                    Endpoint(rbnd.ElEdge, rbnd.ElPm, leftBoundVertex); //set the endpoint of the right HalfEdge to be this vector
+                    Endpoint(leftBound.Edge, leftBound.Midpoint, leftBoundVertex); //set the endpoint of the left HalfEdge to be this vector
+                    Endpoint(rbnd.Edge, rbnd.Midpoint, leftBoundVertex); //set the endpoint of the right HalfEdge to be this vector
                     list.Delete(leftBound); //mark the lowest HE for deletion - can't delete yet because there might be pointers to it in Hash Map	
                     queue.Delete(rbnd); //remove all vertex events to do with the  right HE
                     list.Delete(rbnd); //mark the right HE for deletion - can't delete yet because there might be pointers to it in Hash Map	
@@ -368,8 +368,8 @@ namespace Voronoi
                 else break;
             }
 
-            for (leftBound = list.LeftEnd.ElRight; leftBound != list.RightEnd; leftBound = leftBound.ElRight)
-                ClipLine(leftBound.ElEdge);
+            for (leftBound = list.LeftEnd.Right; leftBound != list.RightEnd; leftBound = leftBound.Right)
+                ClipLine(leftBound.Edge);
         }
 
         /// <summary>
