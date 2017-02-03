@@ -2,11 +2,11 @@
 
 namespace Voronoi
 {
-    public class GraphEdge
+    internal class GraphEdge
     {
-        public readonly Point2D P1;
-        public readonly Point2D P2;
-        public readonly GraphEdge Next;
+        internal readonly Point2D P1;
+        internal readonly Point2D P2;
+        internal readonly GraphEdge Next;
 
         internal GraphEdge(Point2D p1, Point2D p2, GraphEdge n)
         {

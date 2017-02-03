@@ -26,7 +26,7 @@ namespace Voronoi
             he.YStar = v.Y + offset;
             var last = _hash[0];
             _min = 0;
-            while ((next = last.PqNext) != null && (he.YStar > next.YStar || (DblEql(he.YStar, next.YStar) && v.X > next.Vertex.X)))
+            while ((next = last.PqNext) != null && (he.YStar > next.YStar || (DoubleComparison.IsEqual(he.YStar, next.YStar) && v.X > next.Vertex.X)))
                 last = next;
 
             he.PqNext = last.PqNext;
@@ -66,8 +66,6 @@ namespace Voronoi
             _hash[_min].PqNext = curr.PqNext;
             _count -= 1;
             return curr;
-        }
-        
-        private static bool DblEql(double a, double b) => Math.Abs(a - b) < 0.00000000001;
+        }        
     }
 }

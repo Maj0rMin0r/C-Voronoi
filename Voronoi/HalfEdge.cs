@@ -1,4 +1,6 @@
-﻿namespace Voronoi
+﻿using System;
+
+namespace Voronoi
 {
     public class HalfEdge
     {
@@ -15,9 +17,10 @@
             //Generic constructor lets C# to use type defaults
         }
 
-        public HalfEdge(Edge e, int pm)
+        public HalfEdge(Edge edge, int pm)
         {
-            ElEdge = e;
+            if (pm < 0) throw new ArgumentNullException(nameof(pm));
+            ElEdge = edge;
             ElPm = pm;
         }
     }

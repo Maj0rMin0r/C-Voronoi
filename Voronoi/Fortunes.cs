@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 
 namespace Voronoi
@@ -200,7 +199,7 @@ namespace Voronoi
             var xint = (e1.C * e2.B - e2.C * e1.B) / d;
             var yint = (e2.C * e1.A - e1.C * e2.A) / d;
 
-            if ((e1.Reg[1].Y < e2.Reg[1].Y) || (DblEql(e1.Reg[1].Y, e2.Reg[1].Y) &&
+            if ((e1.Reg[1].Y < e2.Reg[1].Y) || (DoubleComparison.IsEqual(e1.Reg[1].Y, e2.Reg[1].Y) &&
                                                               e1.Reg[1].X < e2.Reg[1].X))
             {
                 el = el1;
@@ -238,10 +237,10 @@ namespace Voronoi
             //the square root of 2, then ignore it
             if (e.Reg[0].Distance(e.Reg[1]) < 1.41421356) return;
 
-            var s1 = DblEql(e.A, 1.0) && e.B >= 0.0 ? e.EndPoints[1] : e.EndPoints[0];
-            var s2 = DblEql(e.A, 1.0) && e.B >= 0.0 ? e.EndPoints[0] : e.EndPoints[1];
+            var s1 = DoubleComparison.IsEqual(e.A, 1.0) && e.B >= 0.0 ? e.EndPoints[1] : e.EndPoints[0];
+            var s2 = DoubleComparison.IsEqual(e.A, 1.0) && e.B >= 0.0 ? e.EndPoints[0] : e.EndPoints[1];
 
-            if (DblEql(e.A, 1.0))
+            if (DoubleComparison.IsEqual(e.A, 1.0))
             {
                 y1 = s1 != null && s1.Y > 1 ? s1.Y : 1;
                 y1 = y1 > ImageHeight ? ImageHeight : y1;
@@ -307,7 +306,7 @@ namespace Voronoi
 
                 //if the lowest site has a smaller y value than the lowest vector intersection, process the site
                 //otherwise process the vector intersection		
-                if (newsite != null && (queue.IsEmpty() || newintstar == null || newsite.Y < newintstar.Y || (DblEql(newsite.Y, newintstar.Y) && newsite.X < newintstar.X)))
+                if (newsite != null && (queue.IsEmpty() || newintstar == null || newsite.Y < newintstar.Y || (DoubleComparison.IsEqual(newsite.Y, newintstar.Y) && newsite.X < newintstar.X)))
                 { /* new site is smallest - this is a site event*/
                     leftBound = list.LeftBound(newsite); //get the first HalfEdge to the LEFT of the new site
                     rbnd = leftBound.ElRight; //get the first HalfEdge to the RIGHT of the new site
@@ -372,8 +371,6 @@ namespace Voronoi
             for (leftBound = list.LeftEnd.ElRight; leftBound != list.RightEnd; leftBound = leftBound.ElRight)
                 ClipLine(leftBound.ElEdge);
         }
-
-        private static bool DblEql(double a, double b) => Math.Abs(a - b) < 0.00000000001;
 
         /// <summary>
         /// Gets the next site from sites already in storage.
