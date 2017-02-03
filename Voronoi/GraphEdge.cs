@@ -4,17 +4,17 @@ namespace Voronoi
 {
     internal class GraphEdge
     {
-        internal readonly Point2D P1;
-        internal readonly Point2D P2;
+        public readonly Point2D Point2D1;
+        public readonly Point2D Point2D2;
         internal readonly GraphEdge Next;
 
-        internal GraphEdge(Point2D p1, Point2D p2, GraphEdge n)
+        internal GraphEdge(Point2D point2D1, Point2D point2D2, GraphEdge nextGraphEdge)
         {
-            if (p1 == null) throw new ArgumentNullException(nameof(p1));
-            if (p2 == null) throw new ArgumentNullException(nameof(p2));
-            P1 = p1;
-            P2 = p2;
-            Next = n;
+            if (point2D1 == null) throw new ArgumentNullException(nameof(point2D1));
+            if (point2D2 == null) throw new ArgumentNullException(nameof(point2D2));
+            Point2D1 = point2D1;
+            Point2D2 = point2D2;
+            Next = nextGraphEdge;
         }
     }
 }

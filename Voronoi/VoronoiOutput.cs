@@ -183,24 +183,24 @@ namespace Voronoi
                 LinkedList<Point2D> temp;
                 
                 //Put relation
-                if (graph.ContainsKey(line.P1))
+                if (graph.ContainsKey(line.Point2D1))
                 {
                     //Get value, update, put back
-                    graph.TryGetValue(line.P1, out temp);
+                    graph.TryGetValue(line.Point2D1, out temp);
 
                     if (temp == null)
                         throw new ArgumentNullException(nameof(temp), "Key was missing for some reason");
 
-                    temp.AddLast(line.P2);
-                    graph.Remove(line.P1);
-                    graph.Add(line.P1, temp);
+                    temp.AddLast(line.Point2D2);
+                    graph.Remove(line.Point2D1);
+                    graph.Add(line.Point2D1, temp);
                 }
                 else
                 {
                     //Create value, put
                     temp = new LinkedList<Point2D>();
-                    temp.AddLast(line.P2);
-                    graph.Add(line.P1, temp);
+                    temp.AddLast(line.Point2D2);
+                    graph.Add(line.Point2D1, temp);
                 }
 
                 line = GetNext();
@@ -261,7 +261,7 @@ namespace Voronoi
             var line = GetNext();
             while (line != null)
             {
-                writer.WriteLine("ctx.moveTo(" + line.P1.X + "," + line.P1.Y + ");\nctx.lineTo(" + line.P2.X + "," + line.P2.Y + ");\nctx.stroke();");
+                writer.WriteLine("ctx.moveTo(" + line.Point2D1.X + "," + line.Point2D1.Y + ");\nctx.lineTo(" + line.Point2D2.X + "," + line.Point2D2.Y + ");\nctx.stroke();");
                 line = GetNext();
             }
             writer.WriteLine("</script>\n</body>\n</html>");
