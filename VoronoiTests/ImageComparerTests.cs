@@ -18,7 +18,7 @@ namespace VoronoiTests
             {
                 for (var j = 0; j < 50; ++j)
                 {
-                    regionOfPoints.Add(new IntPoint2D(j,i));
+                    regionOfPoints.Add(new IntPoint2D(i,j));
                 }
             }
             return regionOfPoints;
