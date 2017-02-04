@@ -8,8 +8,6 @@ namespace VoronoiTests
     [TestClass]
     public class VoronoiRunnerTests
     {
-        private const string TestImageDirectory = @"..\..\..\images\TestImages\";
-
         [TestMethod]
         public void Main_InvalidBitmapPath_Exception() => Runner.Runner.Main(new[] {"50", Directory.GetCurrentDirectory(), "a.png", Directory.GetCurrentDirectory() });
 
@@ -19,9 +17,6 @@ namespace VoronoiTests
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
         public void Main_NotEnoughArguments_ArgumentException() => Runner.Runner.Main(new[] { "50", "", "a.png" });
-
-        [TestMethod]
-        public void Start_HappyPath_IsHappy() => Runner.Runner.Start(1, new Bitmap(TestImageDirectory + "WhiteBlackPicture_test.png"), "a.png", Directory.GetCurrentDirectory());
 
         [TestMethod]
         [ExpectedException(typeof(Exception))]
