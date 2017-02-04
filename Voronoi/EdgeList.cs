@@ -6,8 +6,8 @@ namespace Voronoi
     {
         internal HalfEdge LeftEnd { get; }
         internal HalfEdge RightEnd { get; }
-        internal readonly int _hashSize;
-        internal readonly HalfEdge[] _hash;
+        internal readonly int HashSize;
+        internal readonly HalfEdge[] Hash;
 
         /// <summary>
         /// Initializes the array of HalfEdge's based on the number of sites available.
@@ -15,15 +15,15 @@ namespace Voronoi
         /// <param name="sites">number of sites to create</param>
         internal EdgeList(int sites)
         {
-            _hashSize = 2 * (int)Math.Sqrt(sites + 4);
-            _hash = new HalfEdge[_hashSize];
+            HashSize = 2 * (int)Math.Sqrt(sites + 4);
+            Hash = new HalfEdge[HashSize];
 
             LeftEnd = new HalfEdge(null, 0);
             RightEnd = new HalfEdge(null, 0);
             LeftEnd.Right = RightEnd;
             RightEnd.Left = LeftEnd;
-            _hash[0] = LeftEnd;
-            _hash[_hashSize - 1] = RightEnd;
+            Hash[0] = LeftEnd;
+            Hash[HashSize - 1] = RightEnd;
         }
 
         /// <summary>
@@ -33,12 +33,12 @@ namespace Voronoi
         /// <returns>half edge from table that corresponds to b</returns>
         private HalfEdge GetHash(int b)
         {
-            if (b < 0 || b >= _hashSize)
+            if (b < 0 || b >= HashSize)
                 return null;
-            var he = _hash[b];
+            var he = Hash[b];
             if (he?.Edge == null || he.Edge != null)
                 return he;
-            _hash[b] = null;
+            Hash[b] = null;
             return null;
         }
 

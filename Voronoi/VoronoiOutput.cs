@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Voronoi
 {
-    internal class VoronoiOutput : IOutputPrinter
+    public class VoronoiOutput : IOutputPrinter
     {
         private GraphEdge IteratorEdges { get; set; }
         private GraphEdge AllEdges { get; }
