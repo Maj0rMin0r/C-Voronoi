@@ -78,20 +78,18 @@ namespace Voronoi
         public bool[,] OutputLines(int width, int height)
         {
             var array = BuildArray(width, height);
-            var graph = GenerateGraph();
 
-            foreach (var key in graph.Keys)
+            //Get cmd output
+            ResetIterator();
+            var line = GetNext();
+
+            while (line != null)
             {
-                LinkedList<Point2D> valueList;
-                graph.TryGetValue(key, out valueList);
+                DrawLine(R(line.Point2D1.X), R(line.Point2D1.Y), R(line.Point2D2.X), R(line.Point2D2.Y), ref array);
 
-                if (valueList == null)
-                    throw new ArgumentNullException(nameof(valueList), "Values not found");
-
-                foreach (var value in valueList)
-                    DrawLine(R(key.X), R(key.Y), R(value.X), R(value.Y), ref array);
+                line = GetNext();
             }
-
+            
             return array;
         }
         /// <summary>
@@ -147,33 +145,6 @@ namespace Voronoi
         /// </summary>
         private static int R(double input) => input >= 1 ? (int)Math.Round(input - 1, MidpointRounding.AwayFromZero) : 0;
         private void ResetIterator() => IteratorEdges = AllEdges;
-        private Dictionary<Point2D, LinkedList<Point2D>> GenerateGraph()
-        {
-            var graph = new Dictionary<Point2D, LinkedList<Point2D>>();
-            ResetIterator();
-            var line = GetNext();
-            while (line != null)
-            {
-                LinkedList<Point2D> temp;
-                if (graph.ContainsKey(line.Point2D1))
-                {
-                    graph.TryGetValue(line.Point2D1, out temp);
-                    if (temp == null)
-                        throw new ArgumentNullException(nameof(temp), "Key was missing for some reason");
-                    temp.AddLast(line.Point2D2);
-                    graph.Remove(line.Point2D1);
-                    graph.Add(line.Point2D1, temp);
-                }
-                else
-                {
-                    temp = new LinkedList<Point2D>();
-                    temp.AddLast(line.Point2D2);
-                    graph.Add(line.Point2D1, temp);
-                }
-                line = GetNext();
-            }
-            return graph;
-        }
         private static bool[,] BuildArray(int width, int height) => new bool[width, height];
         private GraphEdge GetNext()
         {
@@ -182,20 +153,6 @@ namespace Voronoi
             var returned = IteratorEdges;
             IteratorEdges = IteratorEdges.Next;
             return returned;
-        }
-        void IOutputPrinter.OutputConsole()
-        {
-            var graph = GenerateGraph();
-            Console.Out.WriteLine("Valid paths:");
-            foreach (var key in graph.Keys)
-            {
-                LinkedList<Point2D> valueList;
-                graph.TryGetValue(key, out valueList);
-                if (valueList == null)
-                    throw new ArgumentNullException(nameof(valueList), "Values not found");
-                foreach (var value in valueList)
-                    Console.Out.WriteLine("Got line [" + key.X + ", " + key.Y + "] -> [" + value.X + ", " + value.Y + "], ");
-            }
         }
         /// <summary>
         /// Visual output of voronoi.

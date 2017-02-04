@@ -2,7 +2,6 @@
 {
     public interface IOutputPrinter
     {
-        void OutputConsole();
         void OutputFile(int width, int height, string pathToSaveTo);
 
         void PrintArray(bool[,] array, int width, int height);
