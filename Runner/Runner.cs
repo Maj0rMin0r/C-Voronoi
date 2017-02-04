@@ -33,7 +33,7 @@ namespace Runner
             if (sourceBitmap == null) throw new ArgumentNullException(nameof(sourceBitmap));
             if (newImageName == null) throw new ArgumentNullException(nameof(newImageName));
             if (newImageFileDirectory == null) throw new ArgumentNullException(nameof(newImageFileDirectory));
-            Run(iterations, sourceBitmap, newImageName, newImageFileDirectory, (sourceBitmap.Width + sourceBitmap.Height) / 2);
+            Run(iterations, sourceBitmap, newImageName, newImageFileDirectory, (sourceBitmap.Width + sourceBitmap.Height) * 2);
         }
 
         private static void Run(int iterations, Bitmap newImage, string fileName, string fileDirectory, int numberOfPointsToPlot)

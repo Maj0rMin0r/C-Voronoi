@@ -13,7 +13,6 @@ namespace Voronoi
         internal VoronoiOutput(GraphEdge results, Point2D[] sites)
         {
             AllEdges = results;
-            IteratorEdges = null;
             Sites = sites;
         }
 
@@ -192,12 +191,13 @@ namespace Voronoi
             var writer = new System.IO.StreamWriter(@pathToSaveTo);
             writer.WriteLine("<!DOCTYPE html>\n<html>\n<head>\n<title>\nTitle</title>\n</head>\n<body>\n<canvas id=\"myCanvas\" width=\"" + width + "\" height=\"" + height + "\" style=\"border:1px solid #d3d3d3;\">\nWords"
                     + "</canvas>\n\n<script>\nvar c = document.getElementById(\"myCanvas\");\nvar ctx = c.getContext(\"2d\");\n\n<!--Points-->");
+
             foreach (var t in Sites)
-            {
                 writer.WriteLine("ctx.beginPath();\nctx.arc(" + t.X + "," + t.Y + ",1,0,2*Math.PI);\nctx.stroke();\n\n");
-            }
+
             ResetIterator();
             var line = GetNext();
+
             while (line != null)
             {
                 writer.WriteLine("ctx.moveTo(" + line.Point2D1.X + "," + line.Point2D1.Y + ");\nctx.lineTo(" + line.Point2D2.X + "," + line.Point2D2.Y + ");\nctx.stroke();");
@@ -249,9 +249,7 @@ namespace Voronoi
             for (int y = 0; y < height; y++)
             {
                 for (int x = 0; x < width; x++)
-                {
                     Console.Out.Write(array[x, y] ? "X" : " ");
-                }
                 Console.Out.WriteLine();
             }
         }
