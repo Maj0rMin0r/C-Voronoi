@@ -10,10 +10,10 @@ namespace Voronoi
 
         internal PriorityQueue(int sites)
         {
-            var hashSize = 4 * (int)Math.Sqrt(sites + 4);
+            var hashSize = 4*(int) Math.Sqrt(sites + 4);
             _hash = new HalfEdge[hashSize];
 
-            for (int i = 0; i < hashSize; i++)
+            for (var i = 0; i < hashSize; i++)
                 _hash[i] = new HalfEdge();
         }
 
@@ -26,7 +26,7 @@ namespace Voronoi
             he.YStar = v.Y + offset;
             var last = _hash[0];
             _min = 0;
-            while ((next = last.NextSite) != null && (he.YStar > next.YStar || (DoubleComparison.IsEqual(he.YStar, next.YStar) && v.X > next.Vertex.X)))
+            while (((next = last.NextSite) != null) && ((he.YStar > next.YStar) || (DoubleComparison.IsEqual(he.YStar, next.YStar) && (v.X > next.Vertex.X))))
                 last = next;
 
             he.NextSite = last.NextSite;
@@ -66,6 +66,6 @@ namespace Voronoi
             _hash[_min].NextSite = curr.NextSite;
             _count -= 1;
             return curr;
-        }        
+        }
     }
 }

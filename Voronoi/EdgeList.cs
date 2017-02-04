@@ -4,18 +4,16 @@ namespace Voronoi
 {
     internal class EdgeList
     {
-        internal HalfEdge LeftEnd { get; }
-        internal HalfEdge RightEnd { get; }
-        internal readonly int HashSize;
         internal readonly HalfEdge[] Hash;
+        internal readonly int HashSize;
 
         /// <summary>
-        /// Initializes the array of HalfEdge's based on the number of sites available.
+        ///     Initializes the array of HalfEdge's based on the number of sites available.
         /// </summary>
         /// <param name="sites">number of sites to create</param>
         internal EdgeList(int sites)
         {
-            HashSize = 2 * (int)Math.Sqrt(sites + 4);
+            HashSize = 2*(int) Math.Sqrt(sites + 4);
             Hash = new HalfEdge[HashSize];
 
             LeftEnd = new HalfEdge(null, 0);
@@ -26,24 +24,27 @@ namespace Voronoi
             Hash[HashSize - 1] = RightEnd;
         }
 
+        internal HalfEdge LeftEnd { get; }
+        internal HalfEdge RightEnd { get; }
+
         /// <summary>
-        /// Get entry from hash table, prunes any deleted nodes.
+        ///     Get entry from hash table, prunes any deleted nodes.
         /// </summary>
         /// <param name="b">entry location</param>
         /// <returns>half edge from table that corresponds to b</returns>
         private HalfEdge GetHash(int b)
         {
-            if (b < 0 || b >= HashSize)
+            if ((b < 0) || (b >= HashSize))
                 return null;
             var he = Hash[b];
-            if (he?.Edge == null || he.Edge != null)
+            if ((he?.Edge == null) || (he.Edge != null))
                 return he;
             Hash[b] = null;
             return null;
         }
 
         /// <summary>
-        /// Determines the HalfEdge nearest left to the given point.
+        ///     Determines the HalfEdge nearest left to the given point.
         /// </summary>
         /// <param name="p">Point to find left bound HalfEdge from</param>
         /// <returns>left bound half edge of point</returns>
@@ -51,9 +52,9 @@ namespace Voronoi
         {
             var he = GetHash(0);
             if (he == null)
-            { 
+            {
                 int i;
-                for (i = 1; ; i++)
+                for (i = 1;; i++)
                 {
                     if ((he = GetHash(0 - i)) != null)
                         break;
@@ -61,12 +62,12 @@ namespace Voronoi
                         break;
                 }
             }
-            if (he == LeftEnd || (he != RightEnd && IsRightOf(he, p)))
+            if ((he == LeftEnd) || ((he != RightEnd) && IsRightOf(he, p)))
             {
                 do
                 {
                     he = he.Right;
-                } while (he != RightEnd && IsRightOf(he, p));
+                } while ((he != RightEnd) && IsRightOf(he, p));
 
                 he = he.Left;
             }
@@ -75,14 +76,14 @@ namespace Voronoi
                 do
                 {
                     he = he.Left;
-                } while (he != LeftEnd && !IsRightOf(he, p));
+                } while ((he != LeftEnd) && !IsRightOf(he, p));
             }
             return he;
         }
 
         /// <summary>
-        /// Deletes HalfEdge. This delete routine cannot reclaim the node, since
-        /// hash table pointers may still be present.
+        ///     Deletes HalfEdge. This delete routine cannot reclaim the node, since
+        ///     hash table pointers may still be present.
         /// </summary>
         /// <param name="he">node to delete</param>
         internal void Delete(HalfEdge he)
@@ -93,7 +94,7 @@ namespace Voronoi
         }
 
         /// <summary>
-        /// Determines if the Point is to the right of the HalfEdge.
+        ///     Determines if the Point is to the right of the HalfEdge.
         /// </summary>
         /// <param name="el">edge</param>
         /// <param name="p">point</param>
@@ -104,9 +105,9 @@ namespace Voronoi
             var e = el.Edge;
             var topsite = e.Reg[1];
             var rightOfSite = p.X > topsite.X;
-            if (rightOfSite && el.Midpoint == 0)
+            if (rightOfSite && (el.Midpoint == 0))
                 return true;
-            if (!rightOfSite && el.Midpoint == 1)
+            if (!rightOfSite && (el.Midpoint == 1))
                 return false;
             if (DoubleComparison.IsEqual(e.A, 1.0))
             {
@@ -115,12 +116,12 @@ namespace Voronoi
                 var fast = false;
                 if ((!rightOfSite && (e.B < 0.0)) || (rightOfSite && (e.B >= 0.0)))
                 {
-                    above = dyp >= e.B * dxp;
+                    above = dyp >= e.B*dxp;
                     fast = above;
                 }
                 else
                 {
-                    above = p.X + p.Y * e.B > e.C;
+                    above = p.X + p.Y*e.B > e.C;
                     if (e.B < 0.0)
                         above = !above;
                     if (!above)
@@ -128,23 +129,23 @@ namespace Voronoi
                 }
                 if (fast) return el.Midpoint == 0 ? above : !above;
                 var dxs = topsite.X - e.Reg[0].X;
-                above = e.B * (dxp * dxp - dyp * dyp) < dxs * dyp * (1.0 + 2.0 * dxp / dxs + e.B * e.B);
+                above = e.B*(dxp*dxp - dyp*dyp) < dxs*dyp*(1.0 + 2.0*dxp/dxs + e.B*e.B);
                 if (e.B < 0.0)
                     above = !above;
             }
             else
             {
-                var yl = e.C - e.A * p.X;
+                var yl = e.C - e.A*p.X;
                 var t1 = p.Y - yl;
                 var t2 = p.X - topsite.X;
                 var t3 = yl - topsite.Y;
-                above = t1 * t1 > t2 * t2 + t3 * t3;
+                above = t1*t1 > t2*t2 + t3*t3;
             }
             return el.Midpoint == 0 ? above : !above;
         }
 
         /// <summary>
-        /// Inserts a new HalfEdge next to the previous one
+        ///     Inserts a new HalfEdge next to the previous one
         /// </summary>
         /// <param name="leftBoundHalfEdge"></param>
         /// <param name="newHalfEdge"></param>

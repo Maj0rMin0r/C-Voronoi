@@ -1,6 +1,6 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Drawing;
+﻿using System.Drawing;
 using System.IO;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Voronoi;
 
 namespace VoronoiTests
@@ -14,7 +14,7 @@ namespace VoronoiTests
             ReadonlyBitmap.Set(new Bitmap(10, 10));
             using (var writer = new Drawer(ReadonlyBitmap.Get()))
             {
-                writer.DrawVoronoi(Fortunes.Run(9, 9, new[] {new Point2D(0,0), new Point2D(5, 5) }));
+                writer.DrawVoronoi(Fortunes.Run(9, 9, new[] {new Point2D(0, 0), new Point2D(5, 5)}));
                 writer.SaveToNewImageFile("a.png", Directory.GetCurrentDirectory());
                 writer.SaveToNewImageFile("a.png", Directory.GetCurrentDirectory());
             }

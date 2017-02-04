@@ -4,13 +4,13 @@ namespace Voronoi
 {
     internal class HalfEdge
     {
-        internal HalfEdge Left;
-        internal HalfEdge Right;
-        internal Edge Edge;
         internal readonly int Midpoint;
+        internal Edge Edge;
+        internal HalfEdge Left;
+        internal HalfEdge NextSite;
+        internal HalfEdge Right;
         internal Point2D Vertex;
         internal double YStar;
-        internal HalfEdge NextSite;
 
         internal HalfEdge()
         {

@@ -9,14 +9,14 @@ namespace VoronoiTests
     public class VoronoiRunnerTests
     {
         [TestMethod]
-        public void Main_InvalidBitmapPath_Exception() => Runner.Runner.Main(new[] {"50", Directory.GetCurrentDirectory(), "a.png", Directory.GetCurrentDirectory() });
+        public void Main_InvalidBitmapPath_Exception() => Runner.Runner.Main(new[] {"50", Directory.GetCurrentDirectory(), "a.png", Directory.GetCurrentDirectory()});
 
         [TestMethod]
-        public void Main_InvalidNumberOfPoints_Exception() => Runner.Runner.Main(new[] { "a", Directory.GetCurrentDirectory(), "a.png", Directory.GetCurrentDirectory() });
+        public void Main_InvalidNumberOfPoints_Exception() => Runner.Runner.Main(new[] {"a", Directory.GetCurrentDirectory(), "a.png", Directory.GetCurrentDirectory()});
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
-        public void Main_NotEnoughArguments_ArgumentException() => Runner.Runner.Main(new[] { "50", "", "a.png" });
+        public void Main_NotEnoughArguments_ArgumentException() => Runner.Runner.Main(new[] {"50", "", "a.png"});
 
         [TestMethod]
         [ExpectedException(typeof(Exception))]

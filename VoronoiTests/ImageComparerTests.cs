@@ -15,12 +15,8 @@ namespace VoronoiTests
         {
             var regionOfPoints = new List<IntPoint2D>();
             for (var i = 0; i < 50; ++i)
-            {
                 for (var j = 0; j < 50; ++j)
-                {
-                    regionOfPoints.Add(new IntPoint2D(i,j));
-                }
-            }
+                    regionOfPoints.Add(new IntPoint2D(i, j));
             return regionOfPoints;
         }
 
@@ -32,7 +28,7 @@ namespace VoronoiTests
             var squareRegionofPoints = GetIntPoint2DListOfRegion();
             var site = new IntPoint2D(25, 25);
             var imageComparer = new ImageComparer();
-            
+
             var allDeltaEList = imageComparer.CalculateRegionsDeltaEList(ReadonlyBitmap.Get(), squareRegionofPoints, site);
             Assert.AreEqual(0.0, allDeltaEList.Average());
         }

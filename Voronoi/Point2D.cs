@@ -4,14 +4,14 @@ namespace Voronoi
 {
     public class Point2D
     {
-        public double X { get; set; }
-        public double Y { get; set; }
-
         public Point2D(double x, double y)
         {
             X = x;
             Y = y;
         }
+
+        public double X { get; set; }
+        public double Y { get; set; }
 
         public double Distance(Point2D botCoord)
         {
@@ -25,9 +25,6 @@ namespace Voronoi
 
     public class IntPoint2D
     {
-        public int X { get; set; }
-        public int Y { get; set; }
-
         public IntPoint2D(int x, int y)
         {
             X = x;
@@ -36,8 +33,8 @@ namespace Voronoi
 
         public IntPoint2D(Point2D p)
         {
-            X = (int) Math.Round(p.X,MidpointRounding.AwayFromZero);
-            Y = (int)Math.Round(p.Y, MidpointRounding.AwayFromZero);
+            X = (int) Math.Round(p.X, MidpointRounding.AwayFromZero);
+            Y = (int) Math.Round(p.Y, MidpointRounding.AwayFromZero);
         }
 
         public IntPoint2D(IntPoint2D p)
@@ -45,6 +42,9 @@ namespace Voronoi
             X = p.X;
             Y = p.Y;
         }
+
+        public int X { get; set; }
+        public int Y { get; set; }
 
         public override string ToString() => "[" + X + "," + Y + "]";
     }

@@ -19,12 +19,13 @@ namespace Voronoi
      * 	Edge. Stores 3 doubles, 2 arrays of size 2 of sites, and one int. Implemented
      * 	Graphedge. Stores 2 x/y coords and a next graphedge.
      */
+
     public class Fortunes
     {
+        private GraphEdge _allEdges;
+        private Point2D _bottomsite;
         private int _siteidx;
         private Point2D[] _sites;
-        private Point2D _bottomsite;
-        private GraphEdge _allEdges;
         public int ImageWidth { get; private set; }
         public int ImageHeight { get; private set; }
         public int NumSites { get; private set; }
@@ -34,13 +35,14 @@ namespace Voronoi
          * Runs
          * Outputs
          */
+
         public static VoronoiOutput Run(int width, int height, int siteCount)
         {
             var fortune = new Fortunes
-            {
-                ImageWidth = width,
-                ImageHeight = height
-            };
+                          {
+                              ImageWidth = width,
+                              ImageHeight = height
+                          };
 
             var values = GetSet(siteCount, width, height);
 
@@ -56,13 +58,14 @@ namespace Voronoi
          * Outputs
          * Uses manual set (for testing, mainly)
          */
+
         public static VoronoiOutput Run(int width, int height, Point2D[] values)
         {
             var fortune = new Fortunes
-            {
-                ImageWidth = width,
-                ImageHeight = height
-            };
+                          {
+                              ImageWidth = width,
+                              ImageHeight = height
+                          };
 
             //Run
             fortune.GenerateVoronoi(values);
@@ -78,12 +81,12 @@ namespace Voronoi
             if (values.Length == 0)
                 return false;
 
-            double xmin = values[0].X;
-            double ymin = values[0].Y;
-            double xmax = values[0].X;
-            double ymax = values[0].Y;
+            var xmin = values[0].X;
+            var ymin = values[0].Y;
+            var xmax = values[0].X;
+            var ymax = values[0].Y;
 
-            for (int i = 0; i < NumSites; i++)
+            for (var i = 0; i < NumSites; i++)
             {
                 _sites[i] = values[i];
 
@@ -99,22 +102,22 @@ namespace Voronoi
             }
 
             // Sort x
-            for (int n = 1; n < _sites.Length; n++)
+            for (var n = 1; n < _sites.Length; n++)
             {
                 var tem = _sites[n];
                 int j;
-                for (j = n - 1; j >= 0 && tem.X < _sites[j].X; j--)
+                for (j = n - 1; (j >= 0) && (tem.X < _sites[j].X); j--)
                     _sites[j + 1] = _sites[j];
 
                 _sites[j + 1] = tem;
             }
-            
+
             // Sort y
-            for (int n = 1; n < _sites.Length; n++)
+            for (var n = 1; n < _sites.Length; n++)
             {
                 var tem = _sites[n];
                 int j;
-                for (j = n - 1; j >= 0 && tem.Y < _sites[j].Y; j--)
+                for (j = n - 1; (j >= 0) && (tem.Y < _sites[j].Y); j--)
                     _sites[j + 1] = _sites[j];
 
                 _sites[j + 1] = tem;
@@ -157,18 +160,18 @@ namespace Voronoi
             var dy = s2.Y - s1.Y;
             var adx = dx > 0 ? dx : -dx;
             var ady = dy > 0 ? dy : -dy;
-            newedge.C = s1.X * dx + s1.Y * dy + (dx * dx + dy * dy) * 0.5; //get the slope of the line
+            newedge.C = s1.X*dx + s1.Y*dy + (dx*dx + dy*dy)*0.5; //get the slope of the line
 
             if (adx > ady)
             {
                 newedge.A = 1.0;
-                newedge.B = dy / dx;
+                newedge.B = dy/dx;
                 newedge.C /= dx; //set formula of line, with x fixed to 1
             }
             else
             {
                 newedge.B = 1.0;
-                newedge.A = dx / dy;
+                newedge.A = dx/dy;
                 newedge.C /= dy; //set formula of line, with y fixed to 1
             }
 
@@ -176,7 +179,7 @@ namespace Voronoi
         }
 
         /// <summary>
-        /// Creates a new site where the HalfEdges intersect.
+        ///     Creates a new site where the HalfEdges intersect.
         /// </summary>
         /// <param name="el1">HalfEdge to intersect</param>
         /// <param name="el2">HalfEdge to intersect</param>
@@ -188,19 +191,19 @@ namespace Voronoi
 
             var e1 = el1.Edge;
             var e2 = el2.Edge;
-            if (e1 == null || e2 == null || e1.Reg[1] == e2.Reg[1])
+            if ((e1 == null) || (e2 == null) || (e1.Reg[1] == e2.Reg[1]))
                 return null;
 
-            var d = e1.A * e2.B - e1.B * e2.A;
+            var d = e1.A*e2.B - e1.B*e2.A;
             //This checks for the value being basically zero
-            if (-0.0000000001 < d && d < 0.0000000001)
+            if ((-0.0000000001 < d) && (d < 0.0000000001))
                 return null;
 
-            var xint = (e1.C * e2.B - e2.C * e1.B) / d;
-            var yint = (e2.C * e1.A - e1.C * e2.A) / d;
+            var xint = (e1.C*e2.B - e2.C*e1.B)/d;
+            var yint = (e2.C*e1.A - e1.C*e2.A)/d;
 
             if ((e1.Reg[1].Y < e2.Reg[1].Y) || (DoubleComparison.IsEqual(e1.Reg[1].Y, e2.Reg[1].Y) &&
-                                                              e1.Reg[1].X < e2.Reg[1].X))
+                                                (e1.Reg[1].X < e2.Reg[1].X)))
             {
                 el = el1;
                 e = e1;
@@ -211,7 +214,7 @@ namespace Voronoi
                 e = e2;
             }
 
-            return xint >= e.Reg[1].X && el.Midpoint == 0 || xint < e.Reg[1].X && el.Midpoint == 1 ? null : new Point2D(xint, yint);
+            return ((xint >= e.Reg[1].X) && (el.Midpoint == 0)) || ((xint < e.Reg[1].X) && (el.Midpoint == 1)) ? null : new Point2D(xint, yint);
         }
 
         private void Endpoint(Edge e, int lr, Point2D s)
@@ -237,51 +240,51 @@ namespace Voronoi
             //the square root of 2, then ignore it
             if (e.Reg[0].Distance(e.Reg[1]) < 1.41421356) return;
 
-            var s1 = DoubleComparison.IsEqual(e.A, 1.0) && e.B >= 0.0 ? e.EndPoints[1] : e.EndPoints[0];
-            var s2 = DoubleComparison.IsEqual(e.A, 1.0) && e.B >= 0.0 ? e.EndPoints[0] : e.EndPoints[1];
+            var s1 = DoubleComparison.IsEqual(e.A, 1.0) && (e.B >= 0.0) ? e.EndPoints[1] : e.EndPoints[0];
+            var s2 = DoubleComparison.IsEqual(e.A, 1.0) && (e.B >= 0.0) ? e.EndPoints[0] : e.EndPoints[1];
 
             if (DoubleComparison.IsEqual(e.A, 1.0))
             {
-                y1 = s1 != null && s1.Y > 1 ? s1.Y : 1;
+                y1 = (s1 != null) && (s1.Y > 1) ? s1.Y : 1;
                 y1 = y1 > ImageHeight ? ImageHeight : y1;
-                x1 = e.C - e.B * y1;
-                y2 = s2 != null && s2.Y < ImageHeight ? s2.Y : ImageHeight;
+                x1 = e.C - e.B*y1;
+                y2 = (s2 != null) && (s2.Y < ImageHeight) ? s2.Y : ImageHeight;
                 y2 = y2 < 1 ? 1 : y2;
-                x2 = e.C - e.B * y2;
+                x2 = e.C - e.B*y2;
 
                 if (((x1 > ImageWidth) && (x2 > ImageWidth)) || ((x1 < 1) && (x2 < 1))) return;
 
                 x1 = x1 > ImageWidth ? ImageWidth : x1;
                 x1 = x1 < 1 ? 1 : x1;
-                y1 = x1 > ImageWidth || x1 < 1 ? (e.C - x1) / e.B : y1;
+                y1 = (x1 > ImageWidth) || (x1 < 1) ? (e.C - x1)/e.B : y1;
                 x2 = x2 > ImageWidth ? ImageWidth : x2;
                 x2 = x2 < 1 ? 1 : x2;
-                y2 = x2 > ImageWidth || x2 < 1 ? (e.C - x2) / e.B : y2;
+                y2 = (x2 > ImageWidth) || (x2 < 1) ? (e.C - x2)/e.B : y2;
             }
             else
             {
-                x1 = s1 != null && s1.X > 1 ? s1.X : 1;
+                x1 = (s1 != null) && (s1.X > 1) ? s1.X : 1;
                 x1 = x1 > ImageWidth ? ImageWidth : x1;
-                y1 = e.C - e.A * x1;
-                x2 = s2 != null && s2.X < ImageWidth ? s2.X : ImageWidth;
+                y1 = e.C - e.A*x1;
+                x2 = (s2 != null) && (s2.X < ImageWidth) ? s2.X : ImageWidth;
                 x2 = x2 < 1 ? 1 : x2;
-                y2 = e.C - e.A * x2;
+                y2 = e.C - e.A*x2;
 
                 if (((y1 > ImageHeight) & (y2 > ImageHeight)) | ((y1 < 1) & (y2 < 1))) return;
 
                 y1 = y1 > ImageHeight ? ImageHeight : y1;
                 y1 = y1 < 1 ? 1 : y1;
-                x1 = y1 > ImageHeight || y1 < 1 ? (e.C - y1) / e.A : x1;
+                x1 = (y1 > ImageHeight) || (y1 < 1) ? (e.C - y1)/e.A : x1;
                 y2 = y2 > ImageHeight ? ImageHeight : y2;
                 y2 = y2 < 1 ? 1 : y2;
-                x2 = y2 > ImageHeight || y2 < 1 ? (e.C - y2) / e.A : x2;
+                x2 = (y2 > ImageHeight) || (y2 < 1) ? (e.C - y2)/e.A : x2;
             }
 
             PushGraphEdge(x1, y1, x2, y2);
         }
 
         /// <summary>
-        /// Starts fortune's algorithm.
+        ///     Starts fortune's algorithm.
         /// </summary>
         private void Voronoi()
         {
@@ -306,7 +309,7 @@ namespace Voronoi
 
                 //if the lowest site has a smaller y value than the lowest vector intersection, process the site
                 //otherwise process the vector intersection		
-                if (newsite != null && (queue.IsEmpty() || newintstar == null || newsite.Y < newintstar.Y || (DoubleComparison.IsEqual(newsite.Y, newintstar.Y) && newsite.X < newintstar.X)))
+                if ((newsite != null) && (queue.IsEmpty() || (newintstar == null) || (newsite.Y < newintstar.Y) || (DoubleComparison.IsEqual(newsite.Y, newintstar.Y) && (newsite.X < newintstar.X))))
                 { /* new site is smallest - this is a site event*/
                     leftBound = list.LeftBound(newsite); //get the first HalfEdge to the LEFT of the new site
                     rbnd = leftBound.Right; //get the first HalfEdge to the RIGHT of the new site
@@ -315,14 +318,14 @@ namespace Voronoi
                     bisector = new HalfEdge(e, 0); //create a new HalfEdge, setting its elPm field to 0			
                     EdgeList.ElInsert(leftBound, bisector); //insert this new bisector edge between the left and right vectors in a linked list	
 
-                    if ((p = Intersect(leftBound, bisector)) != null)//if the new bisector intersects with the left edge, remove the left edge's vertex, and put in the new one
+                    if ((p = Intersect(leftBound, bisector)) != null) //if the new bisector intersects with the left edge, remove the left edge's vertex, and put in the new one
                         queue.PQinsert(queue.Delete(leftBound), p, p.Distance(newsite));
 
                     leftBound = bisector;
                     bisector = new HalfEdge(e, 1); //create a new HalfEdge, setting its elPm field to 1
                     EdgeList.ElInsert(leftBound, bisector); //insert the new HE to the right of the original bisector earlier in the IF stmt
 
-                    if ((p = Intersect(bisector, rbnd)) != null)//if this new bisector intersects with the
+                    if ((p = Intersect(bisector, rbnd)) != null) //if this new bisector intersects with the
                         queue.PQinsert(bisector, p, p.Distance(newsite)); //push the HE into the ordered linked list of vertices
 
                     newsite = NextSite();
@@ -356,7 +359,7 @@ namespace Voronoi
                     bisector = new HalfEdge(e, pm); //Create a HE from the Edge 'e', and make it point to that edge with its elEdge field
                     EdgeList.ElInsert(llbnd, bisector); //Insert the new bisector to the right of the left HE
                     Endpoint(e, 1 - pm, leftBoundVertex); //Set one endpoint to the new edge to be the vector point 'v'
-                
+
                     //If left HE and the new bisector don't intersect, then delete the left HE, and reinsert
                     if ((p = Intersect(llbnd, bisector)) != null)
                         queue.PQinsert(queue.Delete(llbnd), p, p.Distance(bot));
@@ -373,15 +376,15 @@ namespace Voronoi
         }
 
         /// <summary>
-        /// Gets the next site from sites already in storage.
+        ///     Gets the next site from sites already in storage.
         /// </summary>
         /// <returns>single in-storage site</returns>
         private Point2D NextSite() => _siteidx >= NumSites ? null : _sites[_siteidx++];
 
         /// <summary>
-        /// Returns a set of random-ish points
-        /// Points are all multiples of 5,
-        /// this ensures points never touch/intersect lines
+        ///     Returns a set of random-ish points
+        ///     Points are all multiples of 5,
+        ///     this ensures points never touch/intersect lines
         /// </summary>
         /// <param name="size"></param>
         /// <param name="x"></param>
@@ -395,8 +398,8 @@ namespace Voronoi
 
             while (unique.Count < size)
             {
-                var point = new Point2D(rand.Next(5, x) / 5 * 5, rand.Next(5, y) / 5 * 5);
-                if (unique.Add(point.ToString()))//If string is unique, point must be unique
+                var point = new Point2D(rand.Next(5, x)/5*5, rand.Next(5, y)/5*5);
+                if (unique.Add(point.ToString())) //If string is unique, point must be unique
                     values[unique.Count - 1] = point;
             }
 

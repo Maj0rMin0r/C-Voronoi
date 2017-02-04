@@ -8,7 +8,7 @@ namespace Voronoi
         private static Bitmap _snapshot;
 
         /// <summary>
-        /// Gets the Bitmap from memory.
+        ///     Gets the Bitmap from memory.
         /// </summary>
         /// <returns>read-only bitmap</returns>
         public static Bitmap Get()
@@ -20,7 +20,7 @@ namespace Voronoi
         }
 
         /// <summary>
-        /// Locks a Bitmap into memory for read-only access. 
+        ///     Locks a Bitmap into memory for read-only access.
         /// </summary>
         /// <param name="source">Bitmap to set into memory</param>
         public static void Set(Bitmap source)

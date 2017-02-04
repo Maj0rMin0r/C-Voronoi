@@ -7,7 +7,6 @@ namespace VoronoiTests
     [TestClass]
     public class VoronoiTests
     {
-        
         [TestMethod]
         public void OnePoint_Normal_CorrectSize()
         {
@@ -35,13 +34,13 @@ namespace VoronoiTests
             var origins = output.Sites;
             var region1 = output.OutputRegion(origins[0], lines);
             var region2 = output.OutputRegion(origins[1], lines);
-            
+
             //Line endpoints are right, in 0,0 index
             Assert.IsTrue(lines[4, 0]);
             Assert.IsTrue(lines[4, 8]);
 
             Assert.AreEqual(2, origins.Length);
-            Assert.AreEqual(72, region1.Count + region2.Count);//9*9-9(for the line) = 72
+            Assert.AreEqual(72, region1.Count + region2.Count); //9*9-9(for the line) = 72
             Assert.AreEqual(36, region1.Count);
         }
 
@@ -63,7 +62,7 @@ namespace VoronoiTests
             Assert.IsTrue(lines[8, 4]);
 
             Assert.AreEqual(2, origins.Length);
-            Assert.AreEqual(72, region1.Count + region2.Count);//9*9-9(for the line) = 72
+            Assert.AreEqual(72, region1.Count + region2.Count); //9*9-9(for the line) = 72
             Assert.AreEqual(36, region1.Count);
         }
 
@@ -85,7 +84,7 @@ namespace VoronoiTests
             Assert.IsTrue(lines[0, 8]);
 
             Assert.AreEqual(2, origins.Length);
-            Assert.AreEqual(72, region1.Count + region2.Count);//9*9-9(for the line) = 72
+            Assert.AreEqual(72, region1.Count + region2.Count); //9*9-9(for the line) = 72
             Assert.AreEqual(36, region1.Count);
         }
 
